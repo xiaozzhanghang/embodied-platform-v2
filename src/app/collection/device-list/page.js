@@ -14,7 +14,8 @@ import {
   Select, 
   Card, 
   Tooltip,
-  Modal
+  Modal,
+  Upload
 } from 'antd';
 import { 
   SearchOutlined, 
@@ -26,7 +27,8 @@ import {
   EyeOutlined,
   EditOutlined,
   StopOutlined,
-  InfoCircleOutlined
+  InfoCircleOutlined,
+  UploadOutlined
 } from '@ant-design/icons';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -184,28 +186,54 @@ export default function DeviceList() {
           }}
         />
 
-        {/* Add Device Modal */}
+        {/* Add Device Modal (Fig 3) */}
         <Modal 
-          title={<Space><PlusOutlined />添加新设备实例</Space>} 
+          title="添加设备" 
           open={isModalOpen} 
           onCancel={() => setIsModalOpen(false)} 
           width={650}
-          okText="创建"
-          cancelText="取消"
+          footer={[
+            <Button key="cancel" onClick={() => setIsModalOpen(false)} style={{ borderRadius: 6 }}>取消</Button>,
+            <Button key="ok" type="primary" onClick={() => setIsModalOpen(false)} style={{ borderRadius: 6, background: '#3b82f6' }}>确定</Button>
+          ]}
           centered
+          closeIcon={<span style={{ color: '#64748b', fontSize: 20 }}>×</span>}
         >
-          <Form layout="vertical" style={{ marginTop: 16 }}>
-            <Form.Item label="选择设备类型" required extra="设备实例必须基于已定义的设备类型创建">
-              <Select placeholder="请选择上层设备类型">
-                <Select.Option value="1">galbot_2.2_RGB</Select.Option>
-                <Select.Option value="2">galbot_2.2_深度</Select.Option>
-              </Select>
+          <Form layout="horizontal" labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} style={{ marginTop: 24 }}>
+            <Form.Item label={<span style={{ fontWeight: 500 }}><span style={{ color: '#ff4d4f' }}>*</span> 设备名称</span>} colon={false}>
+              <Input placeholder="请输入设备名称" suffix="0 / 50" style={{ borderRadius: 6 }} />
             </Form.Item>
-            <Form.Item label="实例名称 / 编号" required>
-              <Input placeholder="例如: R1-HEAD-CAMERA-01" maxLength={50} showCount />
+            
+            <Form.Item label={<span style={{ fontWeight: 500 }}>英文名称 <Tooltip title="System ID"><InfoCircleOutlined style={{ color: '#64748b' }} /></Tooltip></span>} colon={false}>
+              <Input placeholder="请输入英文名称" suffix="0 / 50" style={{ borderRadius: 6 }} />
             </Form.Item>
-            <Form.Item label="备注信息">
-              <Input.TextArea rows={3} placeholder="选填，例如: 放置于3号实验室" />
+
+            <Form.Item label={<span style={{ fontWeight: 500 }}><span style={{ color: '#ff4d4f' }}>*</span> 设备编号</span>} colon={false}>
+              <Input placeholder="请输入设备编号" suffix="0 / 50" style={{ borderRadius: 6 }} />
+            </Form.Item>
+
+            <Form.Item label={<span style={{ fontWeight: 500 }}><span style={{ color: '#ff4d4f' }}>*</span> 设备类型</span>} colon={false}>
+              <Select placeholder="请选择设备类型" style={{ width: '100%' }} />
+            </Form.Item>
+
+            <Form.Item label={<span style={{ fontWeight: 500 }}>URDF</span>} colon={false}>
+              <Space size="middle">
+                <Button type="primary" icon={<UploadOutlined />} style={{ borderRadius: 6, background: '#3b82f6' }}>上传URDF文件</Button>
+                <Text type="secondary" style={{ fontSize: 12, color: '#94a3b8' }}>可上传最多1份urdf格式的文件</Text>
+              </Space>
+            </Form.Item>
+
+            <Form.Item label={<span style={{ fontWeight: 500 }}>设备图片</span>} colon={false}>
+              <div>
+                <Upload listType="picture-card" showUploadList={false}>
+                  <div style={{ color: '#94a3b8' }}>
+                    <PlusOutlined style={{ fontSize: 24 }} />
+                  </div>
+                </Upload>
+                <div style={{ marginTop: 8, color: '#94a3b8', fontSize: 12 }}>
+                  可上传最多5张单个不超过2MB且格式为jpg/jpeg/png/gif的图片
+                </div>
+              </div>
             </Form.Item>
           </Form>
         </Modal>

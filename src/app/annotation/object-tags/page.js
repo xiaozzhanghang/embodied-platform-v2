@@ -38,13 +38,13 @@ export default function ObjectTagsManagement() {
         <motion.div 
           initial={{ opacity: 0, y: 10 }} 
           animate={{ opacity: 1, y: 0 }} 
-          style={{ display: 'flex', gap: 20, alignItems: 'flex-start' }}
+          style={{ display: 'flex', gap: 20, alignItems: 'stretch' }}
         >
           {/* Sidebar */}
           <div style={{ width: 280, flexShrink: 0 }}>
             <Card 
               bodyStyle={{ padding: 12 }} 
-              style={{ borderRadius: 12, border: '1px solid #f1f5f9', background: '#fff' }}
+              style={{ borderRadius: 12, border: '1px solid #f1f5f9', background: '#fff', height: '100%' }}
             >
               {categories.map(cat => (
                 <div 
@@ -75,7 +75,7 @@ export default function ObjectTagsManagement() {
           {/* Main Content */}
           <div style={{ flex: 1 }}>
             <Card 
-              style={{ borderRadius: 12, border: '1px solid #f1f5f9', background: '#fff', minHeight: 600 }}
+              style={{ borderRadius: 12, border: '1px solid #f1f5f9', background: '#fff', height: '100%' }}
               bodyStyle={{ padding: 24 }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
