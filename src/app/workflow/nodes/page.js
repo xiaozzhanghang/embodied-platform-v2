@@ -20,7 +20,7 @@ export default function WorkflowNodes() {
   ];
 
   const columns = [
-    { title: '节点名称/算法模型', dataIndex: 'name', key: 'name', render: text => <span style={{ fontWeight: 600 }}>{text}</span> },
+    { title: '节点名称/算法模型', dataIndex: 'name', key: 'name', render: text => <span style={{ fontWeight: 600  } }>{text}</span> },
     { 
       title: '算子类型', 
       dataIndex: 'type', 
@@ -30,7 +30,7 @@ export default function WorkflowNodes() {
         return <Tag color={color}>{text}</Tag>;
       } 
     },
-    { title: 'I/O 形式', dataIndex: 'io', key: 'io', render: text => <span style={{ fontFamily: 'monospace', background: '#f1f5f9', padding: '2px 6px', borderRadius: 4 }}>{text}</span> },
+    { title: 'I/O 形式', dataIndex: 'io', key: 'io', render: text => <span style={{ fontFamily: 'monospace', background: '#f1f5f9', padding: '2px 6px', borderRadius: 4  } }>{text}</span> },
     { title: '版本', dataIndex: 'version', key: 'version' },
     { 
       title: '服务状态', 
@@ -53,42 +53,42 @@ export default function WorkflowNodes() {
   return (
     <MainLayout>
       <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="v2-global-card">
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 24 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 24  } }>
           <div>
-              <Title level={3} style={{ margin: 0, color: '#0f172a' }}>算子节点管理</Title>
-              <p style={{ color: '#64748b', marginTop: 4 }}>管理底层接入模型、算子，用于在工作流画布中作为拖拽组件使用。</p>
+              <Title level={3} style={{ margin: 0, color: '#0f172a'  } }>算子节点管理</Title>
+              <p style={{ color: '#64748b', marginTop: 4  } }>管理底层接入模型、算子，用于在工作流画布中作为拖拽组件使用。</p>
             </div>
             <Space>
                <Button type="primary" size="large" icon={<PlusOutlined />}>接入新算子模型</Button>
             </Space>
           </div>
 
-        <Card bordered={false} style={{ borderRadius: 10, marginBottom: 16, boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }} bodyStyle={{ padding: '20px 24px 4px' }}>
-          <Form form={form} labelCol={{ flex: '80px' }} wrapperCol={{ flex: 1 }}>
+        <Card variant="borderless" style={{ borderRadius: 10, marginBottom: 16, boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }} styles={{ body: { padding: '20px 24px 4px'  } } }>
+          <Form form={form} labelCol={{ flex: '80px' }} wrapperCol={{ flex: 1  } }>
             <Row gutter={24}>
               <Col span={8}>
-                <Form.Item name="name" label="算子名称" style={{ marginBottom: 16 }}>
+                <Form.Item name="name" label="算子名称" style={{ marginBottom: 16  } }>
                   <Input placeholder="请输入名称" />
                 </Form.Item>
               </Col>
               <Col span={8}>
-                <Form.Item name="type" label="算子类型" style={{ marginBottom: 16 }}>
+                <Form.Item name="type" label="算子类型" style={{ marginBottom: 16  } }>
                   <Select placeholder="请选择类型" />
                 </Form.Item>
               </Col>
               <Col span={8}>
-                <Form.Item name="status" label="服务状态" style={{ marginBottom: 16 }}>
+                <Form.Item name="status" label="服务状态" style={{ marginBottom: 16  } }>
                   <Select placeholder="请选择状态" />
                 </Form.Item>
               </Col>
 
-              <Col span={8} style={{ display: expand ? 'block' : 'none' }}>
-                <Form.Item name="version" label="版本范围" style={{ marginBottom: 16 }}>
+              <Col span={8} style={{ display: expand ? 'block' : 'none'  } }>
+                <Form.Item name="version" label="版本范围" style={{ marginBottom: 16  } }>
                   <Input placeholder="请输入版本" />
                 </Form.Item>
               </Col>
 
-              <Col span={expand ? 16 : 24} style={{ textAlign: 'right', marginBottom: 16 }}>
+              <Col span={expand ? 16 : 24} style={{ textAlign: 'right', marginBottom: 16  } }>
                 <Space>
                   <Button type="primary" htmlType="submit" icon={<SearchOutlined />}>查询</Button>
                   <Button onClick={() => form.resetFields()} icon={<ReloadOutlined />}>重置</Button>

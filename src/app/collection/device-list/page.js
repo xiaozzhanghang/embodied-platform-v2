@@ -15,7 +15,9 @@ import {
   Card, 
   Tooltip,
   Modal,
-  Upload
+  Upload,
+  Dropdown,
+  Menu
 } from 'antd';
 import { 
   SearchOutlined, 
@@ -28,7 +30,10 @@ import {
   EditOutlined,
   StopOutlined,
   InfoCircleOutlined,
-  UploadOutlined
+  UploadOutlined,
+  EllipsisOutlined,
+  ColumnHeightOutlined,
+  SettingOutlined
 } from '@ant-design/icons';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -37,7 +42,17 @@ const { Title, Text } = Typography;
 export default function DeviceList() {
   const [expand, setExpand] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [form] = Form.useForm();
+  
+  const onSelectChange = (newSelectedRowKeys) => {
+    setSelectedRowKeys(newSelectedRowKeys);
+  };
+
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: onSelectChange,
+  };
   
   const data = Array.from({ length: 10 }).map((_, i) => ({
     key: i.toString(),
@@ -98,83 +113,106 @@ export default function DeviceList() {
         <Text type="secondary" className="page-header-desc">查看和管理所有已注册的机器人设备实例及其运行状态</Text>
       </div>
 
-      {/* Redesigned Filter Section */}
-      <Card className="search-form" bordered={false}>
-        <Form form={form} layout="horizontal">
+      {/* ProTable Style Search Section */}
+      <Card className="search-form" variant="borderless" styles={{ body: { padding: '24px 24px' } }} style={{ marginBottom: 16 }}>
+        <Form form={form} layout="horizontal" labelCol={{ flex: '80px' }}>
           <Row gutter={24}>
-            <Col span={8}>
-              <Form.Item name="name" label="设备名称">
-                <Input placeholder="请输入设备名称" allowClear />
+            <Col span={6}>
+              <Form.Item name="name" label="设备名称" style={{ marginBottom: 0 }}>
+                <Input placeholder="请输入" allowClear />
               </Form.Item>
             </Col>
-            <Col span={8}>
-              <Form.Item name="id" label="设备编号">
-                <Input placeholder="请输入设备编号" allowClear />
+            <Col span={6}>
+              <Form.Item name="id" label="设备编号" style={{ marginBottom: 0 }}>
+                <Input placeholder="请输入" allowClear />
               </Form.Item>
             </Col>
-            <AnimatePresence>
-              {!expand ? (
-                <Col span={8} style={{ textAlign: 'right' }}>
-                  <Space>
-                    <Button type="primary" icon={<SearchOutlined />}>搜索</Button>
-                    <Button onClick={() => form.resetFields()} icon={<ReloadOutlined />}>重置</Button>
-                    <Button type="link" onClick={() => setExpand(!expand)} style={{ fontSize: 13 }}>
-                      展开 <DownOutlined />
-                    </Button>
-                  </Space>
-                </Col>
-              ) : null}
-            </AnimatePresence>
-          </Row>
-          
-          <AnimatePresence>
             {expand && (
-              <motion.div 
-                initial={{ opacity: 0, height: 0 }} 
-                animate={{ opacity: 1, height: 'auto' }} 
-                exit={{ opacity: 0, height: 0 }}
-                style={{ overflow: 'hidden' }}
-              >
-                <Row gutter={24}>
-                  <Col span={8}>
-                    <Form.Item name="status" label="设备状态">
-                      <Select placeholder="请选择状态" allowClear>
-                        <Select.Option value="enabled">启用</Select.Option>
-                        <Select.Option value="disabled">禁用</Select.Option>
-                      </Select>
-                    </Form.Item>
-                  </Col>
-                  <Col span={8}>
-                    <Form.Item name="regDate" label="注册时间">
-                      <Input placeholder="请点击选择日期范围" />
-                    </Form.Item>
-                  </Col>
-                  <Col span={8} style={{ textAlign: 'right' }}>
-                    <Space>
-                      <Button type="primary" icon={<SearchOutlined />}>搜索</Button>
-                      <Button onClick={() => form.resetFields()} icon={<ReloadOutlined />}>重置</Button>
-                      <Button type="link" onClick={() => setExpand(!expand)} style={{ fontSize: 13 }}>
-                        收起 <UpOutlined />
-                      </Button>
-                    </Space>
-                  </Col>
-                </Row>
-              </motion.div>
+              <>
+                <Col span={6}>
+                  <Form.Item name="status" label="状态" style={{ marginBottom: 0 }}>
+                    <Select placeholder="请选择" allowClear>
+                      <Select.Option value="enabled">启用</Select.Option>
+                      <Select.Option value="disabled">禁用</Select.Option>
+                    </Select>
+                  </Form.Item>
+                </Col>
+              </>
             )}
-          </AnimatePresence>
+            <Col span={expand ? 6 : 12} style={{ textAlign: 'right' }}>
+              <Form.Item label=" " colon={false} style={{ marginBottom: 0 }}>
+                <Space size="middle">
+                  <Button onClick={() => form.resetFields()}>重置</Button>
+                  <Button type="primary" icon={<SearchOutlined />}>查询</Button>
+                  <Button type="link" onClick={() => setExpand(!expand)} style={{ fontSize: 14, padding: 0 }}>
+                    {expand ? '收起' : '展开'} {expand ? <UpOutlined /> : <DownOutlined />}
+                  </Button>
+                </Space>
+              </Form.Item>
+            </Col>
+          </Row>
         </Form>
       </Card>
 
       <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} className="v2-global-card">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-          <Title level={5} style={{ margin: 0 }}>设备实例列表</Title>
-          <Button type="primary" icon={<PlusOutlined />} onClick={() => setIsModalOpen(true)}>
-            添加设备
-          </Button>
+        {/* ProTable Toolbar */}
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center', 
+          padding: '4px 0 16px',
+          marginBottom: 8 
+        }}>
+          <div style={{ fontSize: 16, fontWeight: 600, color: 'rgba(0,0,0,0.88)' }}>设备实例列表</div>
+          <Space size="middle">
+            <Button type="primary" icon={<PlusOutlined />} onClick={() => setIsModalOpen(true)} style={{ borderRadius: 6 }}>
+              新建
+            </Button>
+            <Space size={12} style={{ marginLeft: 8, color: 'rgba(0,0,0,0.45)', fontSize: 16 }}>
+              <Tooltip title="刷新"><ReloadOutlined style={{ cursor: 'pointer' }} /></Tooltip>
+              <Tooltip title="密度"><ColumnHeightOutlined style={{ cursor: 'pointer' }} /></Tooltip>
+              <Tooltip title="列设置"><SettingOutlined style={{ cursor: 'pointer' }} /></Tooltip>
+            </Space>
+          </Space>
         </div>
 
+        {/* Batch Operations (Smooth Overlay) */}
+        <AnimatePresence>
+          {selectedRowKeys.length > 0 && (
+            <motion.div 
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              style={{ 
+                position: 'relative',
+                zIndex: 10,
+                marginBottom: 16
+              }}
+            >
+              <div style={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                alignItems: 'center', 
+                padding: '12px 24px', 
+                background: '#fff', 
+                borderRadius: '8px', 
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
+                border: '1px solid #f0f0f0'
+              }}>
+                <Space size="middle">
+                  <span style={{ fontSize: 14, color: '#64748b' }}>已选 {selectedRowKeys.length} 项</span>
+                  <Button type="link" onClick={() => setSelectedRowKeys([])} style={{ padding: 0 }}>取消</Button>
+                </Space>
+                <Space size="middle">
+                  <Button danger style={{ borderColor: '#ef4444', color: '#ef4444', borderRadius: 6 }}>批量禁用</Button>
+                </Space>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         <Table 
-          rowSelection={{ type: 'checkbox', fixed: 'left' }}
+          rowSelection={rowSelection}
           scroll={{ x: 'max-content' }}
           columns={columns} 
           dataSource={data} 

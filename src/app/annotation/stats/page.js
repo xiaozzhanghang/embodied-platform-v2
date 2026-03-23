@@ -56,12 +56,12 @@ export default function ProjectStats() {
 
           <Row gutter={24} style={{ marginBottom: 24 }}>
             <Col span={16}>
-              <Card title="每日产能交付趋势 (帧/条)" bordered={false} style={{ borderRadius: 12, boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)' }} styles={{ body: { height: 320 } }}>
+              <Card title="每日产能交付趋势 (帧/条)" variant="borderless" style={{ borderRadius: 12, boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)' }} styles={{ body: { height: 320 } }}>
                 <Area {...areaConfig} />
               </Card>
             </Col>
             <Col span={8}>
-              <Card title={<span><TrophyOutlined style={{ color: '#f59e0b', marginRight: 8 }}/>工匠排行榜</span>} bordered={false} style={{ borderRadius: 12, boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)' }} styles={{ body: { padding: '0 24px 24px' } }}>
+              <Card title={<span><TrophyOutlined style={{ color: '#f59e0b', marginRight: 8 }}/>工匠排行榜</span>} variant="borderless" style={{ borderRadius: 12, boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)' }} styles={{ body: { padding: '0 24px 24px' } }}>
                 <List
                   itemLayout="horizontal"
                   dataSource={ranking}
@@ -82,7 +82,7 @@ export default function ProjectStats() {
 
           <Row gutter={24}>
             <Col span={24}>
-               <Card title="各团队综合准确率对比" bordered={false} style={{ borderRadius: 12, boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)' }} styles={{ body: { height: 300 } }}>
+               <Card title="各团队综合准确率对比" variant="borderless" style={{ borderRadius: 12, boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)' }} styles={{ body: { height: 300 } }}>
                  <Column {...columnConfig} />
                </Card>
             </Col>

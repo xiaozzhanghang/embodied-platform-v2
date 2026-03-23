@@ -25,10 +25,10 @@ export default function SystemUsers() {
       key: 'name',
       render: (text, record) => (
         <Space>
-          <Avatar size="default" style={{ backgroundColor: record.role === '超级管理员' ? '#ef4444' : '#3b82f6' }}>{text.charAt(0)}</Avatar>
+          <Avatar size="default" style={{ backgroundColor: record.role === '超级管理员' ? '#ef4444' : '#3b82f6'  } }>{text.charAt(0)}</Avatar>
           <div>
-            <div style={{ fontWeight: 600 }}>{text}</div>
-            <div style={{ color: '#64748b', fontSize: 13 }}>{record.email}</div>
+            <div style={{ fontWeight: 600  } }>{text}</div>
+            <div style={{ color: '#64748b', fontSize: 13  } }>{record.email}</div>
           </div>
         </Space>
       )
@@ -52,7 +52,7 @@ export default function SystemUsers() {
       fixed: 'right',
       render: () => (
         <Space size="middle">
-          <Button type="text" icon={<EditOutlined />} style={{ color: '#3b82f6' }}>配置权限</Button>
+          <Button type="text" icon={<EditOutlined />} style={{ color: '#3b82f6'  } }>配置权限</Button>
           <Button type="text" danger icon={<DeleteOutlined />}>注销</Button>
         </Space>
       ),
@@ -62,39 +62,39 @@ export default function SystemUsers() {
   return (
     <MainLayout>
       <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="v2-global-card">
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 24 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 24  } }>
           <div>
-            <Title level={3} style={{ margin: 0, color: '#0f172a' }}>系统成员与角色权限</Title>
+            <Title level={3} style={{ margin: 0, color: '#0f172a'  } }>系统成员与角色权限</Title>
           </div>
-          <Button type="primary" size="large" style={{ background: '#0C182B', borderRadius: 8 }}>邀请新成员</Button>
+          <Button type="primary" size="large" style={{ background: '#0C182B', borderRadius: 8  } }>邀请新成员</Button>
         </div>
 
-        <Card bordered={false} style={{ borderRadius: 10, marginBottom: 16, boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }} bodyStyle={{ padding: '20px 24px 4px' }}>
-          <Form form={form} labelCol={{ flex: '80px' }} wrapperCol={{ flex: 1 }}>
+        <Card variant="borderless" style={{ borderRadius: 10, marginBottom: 16, boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }} styles={{ body: { padding: '20px 24px 4px'  } } }>
+          <Form form={form} labelCol={{ flex: '80px' }} wrapperCol={{ flex: 1  } }>
             <Row gutter={24}>
               <Col span={8}>
-                <Form.Item name="name" label="用户名称" style={{ marginBottom: 16 }}>
+                <Form.Item name="name" label="用户名称" style={{ marginBottom: 16  } }>
                   <Input placeholder="请输入用户名" />
                 </Form.Item>
               </Col>
               <Col span={8}>
-                <Form.Item name="role" label="系统角色" style={{ marginBottom: 16 }}>
+                <Form.Item name="role" label="系统角色" style={{ marginBottom: 16  } }>
                   <Select placeholder="请选择角色" />
                 </Form.Item>
               </Col>
               <Col span={8}>
-                <Form.Item name="status" label="账号状态" style={{ marginBottom: 16 }}>
+                <Form.Item name="status" label="账号状态" style={{ marginBottom: 16  } }>
                   <Select placeholder="请选择状态" />
                 </Form.Item>
               </Col>
 
-              <Col span={8} style={{ display: expand ? 'block' : 'none' }}>
-                <Form.Item name="email" label="电子邮箱" style={{ marginBottom: 16 }}>
+              <Col span={8} style={{ display: expand ? 'block' : 'none'  } }>
+                <Form.Item name="email" label="电子邮箱" style={{ marginBottom: 16  } }>
                   <Input placeholder="请输入邮箱" />
                 </Form.Item>
               </Col>
 
-              <Col span={expand ? 16 : 24} style={{ textAlign: 'right', marginBottom: 16 }}>
+              <Col span={expand ? 16 : 24} style={{ textAlign: 'right', marginBottom: 16  } }>
                 <Space>
                   <Button type="primary" htmlType="submit" icon={<SearchOutlined />}>检索</Button>
                   <Button onClick={() => form.resetFields()} icon={<ReloadOutlined />}>重置</Button>

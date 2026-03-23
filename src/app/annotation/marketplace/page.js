@@ -32,7 +32,7 @@ export default function Marketplace() {
             {tasks.map(task => (
               <Col span={12} key={task.id}>
                 <Card 
-                  bordered={false} 
+                  variant="borderless" 
                   hoverable 
                   style={{ borderRadius: 16, boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)' }}
                   styles={{ body: { padding: 24 } }}

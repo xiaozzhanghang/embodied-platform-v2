@@ -37,6 +37,7 @@ import { motion } from 'framer-motion';
 import { Tiny, Pie } from '@ant-design/plots';
 import MainLayout from '@/components/MainLayout';
 import dayjs from 'dayjs';
+import Link from 'next/link';
 
 const { Title, Text } = Typography;
 
@@ -229,7 +230,7 @@ export default function WorkbenchPage() {
                 transition={{ duration: 0.3, ease: 'easeInOut' }}
                 style={{ overflow: 'hidden' }}
               >
-                <Card bordered={false} style={{ borderRadius: 12, overflow: 'hidden', border: '1px solid #e2e8f0' }} styles={{ body: { padding: 0 } }}>
+                <Card variant="borderless" style={{ borderRadius: 12, overflow: 'hidden', border: '1px solid #e2e8f0' }} styles={{ body: { padding: 0 } }}>
                   <div style={{ display: 'flex', minHeight: 220 }}>
                     {/* Left Sidebar for SOP Categories */}
                     <div style={{ width: 180, background: '#f8fafc', borderRight: '1px solid #f1f5f9', padding: '12px 0' }}>
@@ -261,7 +262,7 @@ export default function WorkbenchPage() {
                       {sopStages.find(s => s.key === activeStage)?.actions.map((action, idx) => (
                         <Card 
                           key={idx} 
-                          bordered={false} 
+                          variant="borderless" 
                           className="sop-action-card"
                           style={{ 
                             flex: 1, 
@@ -305,7 +306,7 @@ export default function WorkbenchPage() {
 
             {/* My Tasks Section */}
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.1 }}>
-              <Card bordered={false} style={{ borderRadius: 12, marginBottom: 24 }} styles={{ body: { padding: '20px 24px' } }}>
+              <Card variant="borderless" style={{ borderRadius: 12, marginBottom: 24 }} styles={{ body: { padding: '20px 24px' } }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
                   <Title level={4} style={{ margin: 0, fontSize: 16, fontWeight: 700 }}>任务中心</Title>
                   <Button type="primary" icon={<PlusOutlined />} size="small" style={{ borderRadius: 4 }}>新建数采/标注任务</Button>
@@ -404,7 +405,9 @@ export default function WorkbenchPage() {
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                             <Text type="secondary" style={{ fontSize: 12 }}>异常告警：<Text type="danger">5 帧坐标偏移</Text></Text>
-                            <Button size="small" type="primary" style={{ borderRadius: 4 }}>立即抽检</Button>
+                            <Link href="/collection/qa/test-id/test-record">
+                              <Button size="small" type="primary" style={{ borderRadius: 4 }}>立即抽检</Button>
+                            </Link>
                         </div>
                     </Card>
                   </Col>
@@ -414,11 +417,11 @@ export default function WorkbenchPage() {
 
             {/* Performance Section */}
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.2 }}>
-              <Card bordered={false} style={{ borderRadius: 12 }} styles={{ body: { padding: '20px 24px' } }}>
+              <Card variant="borderless" style={{ borderRadius: 12 }} styles={{ body: { padding: '20px 24px' } }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
                   <Title level={4} style={{ margin: 0, fontSize: 16, fontWeight: 700 }}>效能看板</Title>
                   <Space>
-                    <DatePicker picker="month" defaultValue={dayjs('2026-03')} size="small" bordered={false} style={{ width: 100 }} />
+                    <DatePicker picker="month" defaultValue={dayjs('2026-03')} size="small" variant="borderless" style={{ width: 100 }} />
                     <div style={{ display: 'flex', background: '#f5f5f5', padding: 2, borderRadius: 4 }}>
                        <Button size="small" type="text" style={{ background: '#fff', boxShadow: '0 1px 2px rgba(0,0,0,0.1)', borderRadius: 2 }}>个人</Button>
                        <Button size="small" type="text">项目组</Button>
@@ -468,7 +471,7 @@ export default function WorkbenchPage() {
           <Col span={6}>
             {/* Common Functions (Renamed from Common Laboratory Functions) */}
             <motion.div initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3 }}>
-              <Card bordered={false} style={{ borderRadius: 12, marginBottom: 20 }} styles={{ body: { padding: '16px' } }}>
+              <Card variant="borderless" style={{ borderRadius: 12, marginBottom: 20 }} styles={{ body: { padding: '16px' } }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
                   <Text strong>常用功能</Text>
                   <Button type="link" size="small" style={{ color: '#94a3b8', padding: 0 }}>管理 <SettingOutlined /></Button>
@@ -486,7 +489,7 @@ export default function WorkbenchPage() {
 
             {/* To-do List */}
             <motion.div initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3, delay: 0.1 }}>
-              <Card bordered={false} style={{ borderRadius: 12, marginBottom: 20 }} styles={{ body: { padding: '16px' } }}>
+              <Card variant="borderless" style={{ borderRadius: 12, marginBottom: 20 }} styles={{ body: { padding: '16px' } }}>
                 <Text strong style={{ display: 'block', marginBottom: 16 }}>我的待办</Text>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                    <div style={{ background: '#f8fafc', padding: 12, borderRadius: 8, display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -496,13 +499,15 @@ export default function WorkbenchPage() {
                         <Text type="secondary" style={{ fontSize: 12 }}>在线告警</Text>
                       </div>
                    </div>
-                   <div style={{ background: '#f8fafc', padding: 12, borderRadius: 8, display: 'flex', alignItems: 'center', gap: 12 }}>
-                      <div style={{ width: 32, height: 32, borderRadius: 8, background: '#fee2e2', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><FileSearchOutlined style={{ color: '#ef4444' }} /></div>
-                      <div>
-                        <div style={{ fontSize: 16, fontWeight: 700 }}>5</div>
-                        <Text type="secondary" style={{ fontSize: 12 }}>待抽检</Text>
-                      </div>
-                   </div>
+                   <Link href="/collection/qa" style={{ display: 'block', textDecoration: 'none' }}>
+                     <div style={{ background: '#f8fafc', padding: 12, borderRadius: 8, display: 'flex', alignItems: 'center', gap: 12, cursor: 'pointer' }}>
+                        <div style={{ width: 32, height: 32, borderRadius: 8, background: '#fee2e2', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><FileSearchOutlined style={{ color: '#ef4444' }} /></div>
+                        <div>
+                          <div style={{ fontSize: 16, fontWeight: 700 }}>5</div>
+                          <Text type="secondary" style={{ fontSize: 12 }}>待抽检</Text>
+                        </div>
+                     </div>
+                   </Link>
                    <div style={{ background: '#f8fafc', padding: 12, borderRadius: 8, display: 'flex', alignItems: 'center', gap: 12 }}>
                       <div style={{ width: 32, height: 32, borderRadius: 8, background: '#ffedd5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><DeploymentUnitOutlined style={{ color: '#f59e0b' }} /></div>
                       <div>
@@ -523,7 +528,7 @@ export default function WorkbenchPage() {
 
             {/* Schedule */}
             <motion.div initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3, delay: 0.2 }}>
-              <Card bordered={false} style={{ borderRadius: 12, marginBottom: 20 }} styles={{ body: { padding: '16px' } }}>
+              <Card variant="borderless" style={{ borderRadius: 12, marginBottom: 20 }} styles={{ body: { padding: '16px' } }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
                   <Text strong>数采与研发日程</Text>
                   <Button type="link" size="small" style={{ color: '#94a3b8', padding: 0 }}>更多 <RightOutlined style={{ fontSize: 10 }} /></Button>
@@ -570,7 +575,7 @@ export default function WorkbenchPage() {
 
             {/* Notifications */}
             <motion.div initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3, delay: 0.3 }}>
-              <Card bordered={false} style={{ borderRadius: 12 }} styles={{ body: { padding: '16px' } }}>
+              <Card variant="borderless" style={{ borderRadius: 12 }} styles={{ body: { padding: '16px' } }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
                   <Text strong>实验室通告</Text>
                   <Button type="link" size="small" style={{ color: '#94a3b8', padding: 0 }}>更多 <RightOutlined style={{ fontSize: 10 }} /></Button>

@@ -35,7 +35,7 @@ export default function SimulationAssets() {
             {assets.map(asset => (
               <Col span={8} key={asset.id}>
                 <Card 
-                  bordered={false} 
+                  variant="borderless" 
                   hoverable 
                   style={{ borderRadius: 16, boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)', overflow: 'hidden' }}
                   styles={{ body: { padding: 0 } }}

@@ -266,7 +266,7 @@ export default function AnnotationReviewPage() {
                         <Button shape="round" style={{ background: '#ef4444', color: '#fff', border: 'none', width: 70 }}>不合格</Button>
                         <Divider type="vertical" />
                         <Button type="text" icon={<SyncOutlined />} />
-                        <Select defaultValue="1x" bordered={false} style={{ width: 70 }} suffixIcon={<CaretRightOutlined />}>
+                        <Select defaultValue="1x" variant="borderless" style={{ width: 70 }} suffixIcon={<CaretRightOutlined />}>
                             <Select.Option value="0.5x">0.5 x</Select.Option>
                             <Select.Option value="1x">1 x</Select.Option>
                             <Select.Option value="2x">2 x</Select.Option>

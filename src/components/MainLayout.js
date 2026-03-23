@@ -209,7 +209,7 @@ export default function MainLayout({ children }) {
     ],
     onClick: ({ key }) => {
       if (key === 'logout') {
-        router.push('/');
+        router.push('/login');
       }
     },
   };

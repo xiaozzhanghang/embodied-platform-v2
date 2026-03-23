@@ -96,7 +96,7 @@ const StatChartCard = ({ title, data, maxDuration, maxCount, loading }) => {
     };
 
     return (
-        <Card bordered={false} style={{ borderRadius: 12, boxShadow: '0 4px 20px rgba(0,0,0,0.02)', height: '100%' }} styles={{ body: { padding: '20px 24px' } }}>
+        <Card variant="borderless" style={{ borderRadius: 12, boxShadow: '0 4px 20px rgba(0,0,0,0.02)', height: '100%' }} styles={{ body: { padding: '20px 24px' } }}>
             <Skeleton active loading={loading} paragraph={{ rows: 6 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
                     <Space>
@@ -170,7 +170,7 @@ export default function DashboardPage() {
         <MainLayout>
             <div style={{ paddingBottom: 24, paddingRight: 8 }}>
                 {/* GLOBAL FILTER BAR */}
-                <Card bordered={false} style={{ marginBottom: 24 }} styles={{ body: { padding: '16px 24px' } }}>
+                <Card variant="borderless" style={{ marginBottom: 24 }} styles={{ body: { padding: '16px 24px' } }}>
                     <Row align="middle" justify="space-between">
                         <Col>
                             <Space size="large">
@@ -180,10 +180,10 @@ export default function DashboardPage() {
                                 </Space>
                                 <Divider type="vertical" />
                                 <Space>
-                                    <Select defaultValue="custom" style={{ width: 100 }} bordered={false}>
+                                    <Select defaultValue="custom" style={{ width: 100 }} variant="borderless">
                                         <Select.Option value="custom">自定义</Select.Option>
                                     </Select>
-                                    <RangePicker placeholder={['请选择时间', '请选择时间']} bordered={false} />
+                                    <RangePicker placeholder={['请选择时间', '请选择时间']} variant="borderless" />
                                 </Space>
                             </Space>
                         </Col>
@@ -191,13 +191,13 @@ export default function DashboardPage() {
                             <Space size="large">
                                 <Space>
                                     <Text type="secondary">数采中心</Text>
-                                    <Select defaultValue="center1" style={{ width: 160 }} bordered={false}>
+                                    <Select defaultValue="center1" style={{ width: 160 }} variant="borderless">
                                         <Select.Option value="center1">天奇数采中心</Select.Option>
                                     </Select>
                                 </Space>
                                 <Space>
                                     <Text type="secondary">项目</Text>
-                                    <Select placeholder="请选择" style={{ width: 160 }} bordered={false} />
+                                    <Select placeholder="请选择" style={{ width: 160 }} variant="borderless" />
                                 </Space>
                             </Space>
                         </Col>
@@ -232,7 +232,7 @@ export default function DashboardPage() {
                     <Row style={{ marginTop: 24 }}>
                         <Col span={24}>
                             <motion.div variants={itemVariants}>
-                                <Card bordered={false} style={{ borderRadius: 12, boxShadow: '0 4px 20px rgba(0,0,0,0.02)' }} styles={{ body: { padding: '24px' } }}>
+                                <Card variant="borderless" style={{ borderRadius: 12, boxShadow: '0 4px 20px rgba(0,0,0,0.02)' }} styles={{ body: { padding: '24px' } }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
                                         <Space>
                                             <AlertOutlined style={{ color: '#ef4444', fontSize: 18 }} />

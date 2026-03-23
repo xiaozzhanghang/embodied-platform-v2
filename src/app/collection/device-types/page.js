@@ -29,7 +29,10 @@ import {
   EyeOutlined,
   EditOutlined,
   StopOutlined,
-  InfoCircleOutlined
+  InfoCircleOutlined,
+  ReloadOutlined,
+  ColumnHeightOutlined,
+  SettingOutlined
 } from '@ant-design/icons';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -142,7 +145,7 @@ export default function DeviceTypes() {
       </div>
 
       {/* Collapsible Filter Section */}
-      <Card className="search-form" bordered={false}>
+      <Card className="search-form" variant="borderless">
         <Form layout="horizontal">
           <Row gutter={24}>
             <Col span={8}>
@@ -184,32 +187,112 @@ export default function DeviceTypes() {
         </Form>
       </Card>
 
-      <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} className="v2-global-card">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-          <Tabs 
-            activeKey={activeTab} 
-            onChange={setActiveTab} 
-            items={tabItems} 
-            type="card"
-            style={{ marginBottom: 0 }} 
-          />
-          <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
-            添加{activeTab === 'devices' ? '设备' : '部件'}
-          </Button>
-        </div>
+      <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} style={{ padding: 0 }}>
+        {/* main table block */}
+        <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+          <div style={{ padding: '16px 24px 0 24px' }}>
+            <Tabs 
+              activeKey={activeTab} 
+              onChange={setActiveTab} 
+              items={tabItems} 
+              type="card"
+              tabBarStyle={{ borderBottom: 'none', marginBottom: 0 }}
+            />
+          </div>
 
-        <Table 
-          rowSelection={{ type: 'checkbox', fixed: 'left' }}
-          scroll={{ x: 'max-content' }}
-          columns={activeTab === 'devices' ? deviceColumns : partColumns} 
-          dataSource={activeTab === 'devices' ? deviceData : partData} 
-          pagination={{ 
-            total: activeTab === 'devices' ? deviceData.length : partData.length, 
-            showSizeChanger: true, 
-            showQuickJumper: true, 
-            showTotal: (t) => `共 ${t} 条` 
-          }}
-        />
+          <div className="toolbar" style={{ padding: '16px 24px' }}>
+            <div className="toolbar-left">
+              <span className="tbl-title">{activeTab === 'devices' ? '机器人设备列表' : '机器人部件列表'}</span>
+            </div>
+            <div className="toolbar-right">
+              <Space size="middle">
+                <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>添加{activeTab === 'devices' ? '设备' : '部件'}</Button>
+                <div className="icon-btn"><ReloadOutlined style={{ fontSize: 16 }} /></div>
+                <div className="icon-btn"><ColumnHeightOutlined style={{ fontSize: 16 }} /></div>
+                <div className="icon-btn"><SettingOutlined style={{ fontSize: 16 }} /></div>
+              </Space>
+            </div>
+          </div>
+
+          <div className="tbl-wrap">
+            <table className="tbl">
+              <thead>
+                <tr>
+                  <th style={{ width: 50, textAlign: 'center' }}><input type="checkbox" /></th>
+                  {activeTab === 'devices' ? (
+                    <>
+                      <th>机器人名称</th>
+                      <th>英文名称</th>
+                      <th>版本</th>
+                      <th>URDF</th>
+                      <th>传感器描述</th>
+                      <th>注册时间</th>
+                    </>
+                  ) : (
+                    <>
+                      <th>部件名称</th>
+                      <th>英文名称</th>
+                      <th>版本</th>
+                      <th>URDF</th>
+                      <th>传感器描述</th>
+                      <th>注册时间</th>
+                      <th>状态</th>
+                    </>
+                  )}
+                  <th style={{ minWidth: 200 }}>操作</th>
+                </tr>
+              </thead>
+              <tbody className="fade-rows">
+                {(activeTab === 'devices' ? deviceData : partData).map((item) => (
+                  <tr key={item.key}>
+                    <td style={{ textAlign: 'center' }}><input type="checkbox" /></td>
+                    {activeTab === 'devices' ? (
+                      <>
+                        <td>{item.name}</td>
+                        <td style={{ color: '#666' }}>{item.enName}</td>
+                        <td>{item.version}</td>
+                        <td>{item.urdf ? <a style={{ color: '#1a73e8' }}>{item.urdf}</a> : '-'}</td>
+                        <td style={{ color: '#a0aab5', maxWidth: 200, WebkitLineClamp: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.desc}</td>
+                        <td style={{ color: '#333' }}>{item.regDate}</td>
+                      </>
+                    ) : (
+                      <>
+                        <td>{item.name}</td>
+                        <td style={{ color: '#666' }}>{item.enName}</td>
+                        <td>{item.version}</td>
+                        <td>{item.urdf ? <a style={{ color: '#1a73e8' }}>{item.urdf}</a> : '-'}</td>
+                        <td style={{ color: '#a0aab5', maxWidth: 200, WebkitLineClamp: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.desc}</td>
+                        <td style={{ color: '#333' }}>{item.regDate}</td>
+                        <td>
+                          <span className={`status-badge ${item.stat === 'enabled' ? 'status-success' : 'status-default'}`}>
+                            {item.stat === 'enabled' ? '启用' : '禁用'}
+                          </span>
+                        </td>
+                      </>
+                    )}
+                    <td>
+                      <div className="act-btns" style={{ display: 'flex', gap: 16 }}>
+                         <button className="act-btn" style={{ color: '#3b82f6' }}><EyeOutlined style={{ marginRight: 4 }} /> 查看</button>
+                         <button className="act-btn" style={{ color: '#3b82f6' }}><EditOutlined style={{ marginRight: 4 }} /> 编辑</button>
+                         <button className="act-btn del" style={{ color: '#ff4d4f' }}><StopOutlined style={{ marginRight: 4 }} /> 禁用</button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="pager" style={{ padding: '12px 24px' }}>
+            <span className="pager-info">共 <b>{activeTab === 'devices' ? deviceData.length : partData.length}</b> 条数据</span>
+            <div className="pager-right">
+              <select className="pager-size"><option>20 条/页</option></select>
+              <button className="pager-btn" disabled>‹</button>
+              <button className="pager-btn cur">1</button>
+              <button className="pager-btn">›</button>
+            </div>
+          </div>
+        </div>
 
         {/* Device Modal (Fig 1) */}
         <Modal 

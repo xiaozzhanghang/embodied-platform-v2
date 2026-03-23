@@ -26,12 +26,12 @@ export default function WorkflowTasks() {
       render: (text, record) => (
         <Space>
           <CodeOutlined style={{ color: '#94a3b8' }} />
-          <span style={{ fontWeight: 600 }}>{text}</span>
-          {record.status === 'beta' && <Tag color="warning" style={{ margin: 0, padding: '0 4px', fontSize: 11 }}>BETA</Tag>}
+          <span style={{ fontWeight: 600  } }>{text}</span>
+          {record.status === 'beta' && <Tag color="warning" style={{ margin: 0, padding: '0 4px', fontSize: 11  } }>BETA</Tag>}
         </Space>
       )
     },
-    { title: '工具详情与作用', dataIndex: 'desc', key: 'desc', render: text => <span style={{ color: '#64748b' }}>{text}</span> },
+    { title: '工具详情与作用', dataIndex: 'desc', key: 'desc', render: text => <span style={{ color: '#64748b'  } }>{text}</span> },
     { title: '运行环境', dataIndex: 'language', key: 'language', render: text => <Tag color="default">{text}</Tag> },
     { title: '全局调用次数', dataIndex: 'uses', key: 'uses' },
     {
@@ -49,42 +49,42 @@ export default function WorkflowTasks() {
   return (
     <MainLayout>
       <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="v2-global-card">
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 24 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 24  } }>
           <div>
-              <Title level={3} style={{ margin: 0, color: '#0f172a' }}>工作流预设工具库</Title>
-              <p style={{ color: '#64748b', marginTop: 4 }}>开箱即用的高频机器人动作脚本，可直接插入工作流使用。</p>
+              <Title level={3} style={{ margin: 0, color: '#0f172a'  } }>工作流预设工具库</Title>
+              <p style={{ color: '#64748b', marginTop: 4  } }>开箱即用的高频机器人动作脚本，可直接插入工作流使用。</p>
             </div>
             <Space>
                <Button type="primary" size="large" icon={<PlusOutlined />}>编写新脚本</Button>
             </Space>
           </div>
 
-        <Card bordered={false} style={{ borderRadius: 10, marginBottom: 16, boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }} bodyStyle={{ padding: '20px 24px 4px' }}>
-          <Form form={form} labelCol={{ flex: '80px' }} wrapperCol={{ flex: 1 }}>
+        <Card variant="borderless" style={{ borderRadius: 10, marginBottom: 16, boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }} styles={{ body: { padding: '20px 24px 4px'  } } }>
+          <Form form={form} labelCol={{ flex: '80px' }} wrapperCol={{ flex: 1  } }>
             <Row gutter={24}>
               <Col span={8}>
-                <Form.Item name="name" label="工具名称" style={{ marginBottom: 16 }}>
+                <Form.Item name="name" label="工具名称" style={{ marginBottom: 16  } }>
                   <Input placeholder="请输入名称" />
                 </Form.Item>
               </Col>
               <Col span={8}>
-                <Form.Item name="language" label="运行环境" style={{ marginBottom: 16 }}>
+                <Form.Item name="language" label="运行环境" style={{ marginBottom: 16  } }>
                   <Select placeholder="请选择环境" />
                 </Form.Item>
               </Col>
               <Col span={8}>
-                <Form.Item name="status" label="状态" style={{ marginBottom: 16 }}>
+                <Form.Item name="status" label="状态" style={{ marginBottom: 16  } }>
                   <Select placeholder="请选择状态" />
                 </Form.Item>
               </Col>
 
-              <Col span={8} style={{ display: expand ? 'block' : 'none' }}>
-                <Form.Item name="creator" label="创建人" style={{ marginBottom: 16 }}>
+              <Col span={8} style={{ display: expand ? 'block' : 'none'  } }>
+                <Form.Item name="creator" label="创建人" style={{ marginBottom: 16  } }>
                   <Input placeholder="请输入创建人" />
                 </Form.Item>
               </Col>
 
-              <Col span={expand ? 16 : 24} style={{ textAlign: 'right', marginBottom: 16 }}>
+              <Col span={expand ? 16 : 24} style={{ textAlign: 'right', marginBottom: 16  } }>
                 <Space>
                   <Button type="primary" htmlType="submit" icon={<SearchOutlined />}>查询</Button>
                   <Button onClick={() => form.resetFields()} icon={<ReloadOutlined />}>重置</Button>

@@ -2,20 +2,22 @@
 import React, { useState } from 'react';
 import MainLayout from '@/components/MainLayout';
 import { motion } from 'framer-motion';
-import { Form, Row, Col, Select, Card, Input, Button, Space, Typography } from 'antd';
-import { DownOutlined, UpOutlined, ReloadOutlined, SearchOutlined } from '@ant-design/icons';
+import { DownOutlined, UpOutlined, ReloadOutlined, SearchOutlined, EyeOutlined } from '@ant-design/icons';
+import { Form, Row, Col, Select, Card, Input, Button, Space, Typography, Tag, Progress, Tabs } from 'antd';
+import Link from 'next/link';
 
 export default function QualityInspectionDashboard() {
   const [expand, setExpand] = React.useState(false);
   const [form] = Form.useForm();
   const [activeTab, setActiveTab] = useState('all');
 
+  // Dimension: Package (包列表)
   const qaData = [
-    { id: 'D20240301001', name: '餐具摆放', device: 'galbot_001', time: '2026-03-01 10:23', duration: '2m 34s', status: 'pending', inspector: '—', inspectTime: '—' },
-    { id: 'D20240301002', name: '餐具摆放', device: 'galbot_001', time: '2026-03-01 10:28', duration: '1m 58s', status: 'done', inspector: '张三', inspectTime: '2026-03-02' },
-    { id: 'D20240301003', name: '商业采集', device: 'galbot_002', time: '2026-03-01 11:05', duration: '3m 12s', status: 'done', inspector: '李四', inspectTime: '2026-03-02' },
-    { id: 'D20240301004', name: '商业采集', device: 'galbot_002', time: '2026-03-01 11:22', duration: '2m 45s', status: 'error', inspector: '王五', inspectTime: '2026-03-02' },
-    { id: 'D20240301005', name: '物品整理', device: 'galbot_003', time: '2026-03-01 14:30', duration: '1m 20s', status: 'pending', inspector: '—', inspectTime: '—' },
+    { id: 'PKG-20240301-001', taskName: '餐具摆放采集', device: 'galbot_001', time: '2026-03-01 10:23', total: 47, audited: 12, status: 'pending', sourceStatus: 'paused' },
+    { id: 'PKG-20240301-002', taskName: '餐具摆放采集', device: 'galbot_001', time: '2026-03-01 15:28', total: 50, audited: 50, status: 'done', sourceStatus: 'completed' },
+    { id: 'PKG-20240302-001', taskName: '商业场景采集', device: 'galbot_002', time: '2026-03-02 11:05', total: 30, audited: 30, status: 'done', sourceStatus: 'completed' },
+    { id: 'PKG-20240302-002', taskName: '商业场景采集', device: 'galbot_002', time: '2026-03-02 11:22', total: 25, audited: 5, status: 'error', sourceStatus: 'completed' },
+    { id: 'PKG-20240303-001', taskName: '物品整理采集', device: 'galbot_003', time: '2026-03-03 14:30', total: 40, audited: 0, status: 'pending', sourceStatus: 'paused' },
   ];
 
   const sMap = {
@@ -32,12 +34,12 @@ export default function QualityInspectionDashboard() {
       <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} style={{ padding: 0 }}>
         
         {/* filter-card */}
-        <Card bordered={false} style={{ borderRadius: 10, marginBottom: 16, boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }} bodyStyle={{ padding: '24px 24px 8px' }}>
+        <Card variant="borderless" style={{ borderRadius: 10, marginBottom: 16, boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }} styles={{ body: { padding: '24px 24px 8px' } }}>
           <Form form={form} labelCol={{ flex: '80px' }} wrapperCol={{ flex: 1 }}>
             <Row gutter={24}>
               <Col span={8}>
-                <Form.Item name="name" label="任务名称" style={{ marginBottom: 16 }}>
-                  <Input placeholder="请输入任务名称" />
+                <Form.Item name="id" label="包ID" style={{ marginBottom: 16 }}>
+                  <Input placeholder="请输入包ID" />
                 </Form.Item>
               </Col>
               <Col span={8}>
@@ -51,10 +53,10 @@ export default function QualityInspectionDashboard() {
                 </Form.Item>
               </Col>
               <Col span={8} style={{ display: expand ? 'block' : 'none' }}>
-                <Form.Item name="device" label="设备类型" style={{ marginBottom: 16 }}>
-                  <Select placeholder="请选择设备">
-                    <Select.Option value="all">全部</Select.Option>
-                    <Select.Option value="galbot_2.2_RGB">galbot_2.2_RGB</Select.Option>
+                <Form.Item name="source" label="来源状态" style={{ marginBottom: 16 }}>
+                  <Select placeholder="请选择来源">
+                    <Select.Option value="completed">已完成</Select.Option>
+                    <Select.Option value="paused">已暂停</Select.Option>
                   </Select>
                 </Form.Item>
               </Col>
@@ -73,32 +75,25 @@ export default function QualityInspectionDashboard() {
         </Card>
 
         {/* card block */}
-        <div className="card" style={{ padding: 0 }}>
-          <div className="tabs-bar" style={{ padding: '0 24px' }}>
-            <div className="tabs-pill">
-              <button className={`tab-pill ${activeTab === 'all' ? 'active' : ''}`} onClick={() => setActiveTab('all')}>
-                📋 全部 <span className="tab-count">21,551</span>
-              </button>
-              <button className={`tab-pill ${activeTab === 'pending' ? 'active' : ''}`} data-t="pending" onClick={() => setActiveTab('pending')}>
-                🕐 待质检 <span className="tab-count">2,847</span>
-              </button>
-              <button className={`tab-pill ${activeTab === 'done' ? 'active' : ''}`} data-t="done" onClick={() => setActiveTab('done')}>
-                ✅ 已通过 <span className="tab-count">18,234</span>
-              </button>
-              <button className={`tab-pill ${activeTab === 'error' ? 'active' : ''}`} data-t="error" onClick={() => setActiveTab('error')}>
-                ❌ 已拒绝 <span className="tab-count">342</span>
-              </button>
-              <button className={`tab-pill ${activeTab === 'running' ? 'active' : ''}`} data-t="running" onClick={() => setActiveTab('running')}>
-                🔄 待复检 <span className="tab-count">128</span>
-              </button>
-            </div>
+        <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+          <div style={{ padding: '16px 24px 0 24px' }}>
+            <Tabs 
+              activeKey={activeTab} 
+              onChange={setActiveTab} 
+              type="card"
+              tabBarStyle={{ borderBottom: 'none', marginBottom: 0 }}
+              items={[
+                { key: 'all', label: (<div style={{ display: 'flex', alignItems: 'center', gap: 8 }}><span style={{ fontSize: 16 }}>📋</span> 全部</div>) },
+                { key: 'pending', label: (<div style={{ display: 'flex', alignItems: 'center', gap: 8 }}><span style={{ fontSize: 16 }}>🕐</span> 待质检</div>) },
+                { key: 'done', label: (<div style={{ display: 'flex', alignItems: 'center', gap: 8 }}><span style={{ fontSize: 16 }}>✅</span> 已通过</div>) },
+                { key: 'error', label: (<div style={{ display: 'flex', alignItems: 'center', gap: 8 }}><span style={{ fontSize: 16 }}>❌</span> 已拒绝</div>) },
+              ]}
+            />
           </div>
           
           <div className="toolbar" style={{ padding: '16px 24px' }}>
-            <div className="toolbar-left"><span className="tbl-title">质检列表</span></div>
+            <div className="toolbar-left"><span className="tbl-title">分包质检列表</span></div>
             <div className="toolbar-right">
-              <button className="btn btn-primary btn-sm" style={{ marginRight: 6 }}>批量通过</button>
-              <button className="btn btn-danger btn-sm" style={{ marginRight: 6 }}>批量拒绝</button>
               <div className="icon-btn">↻</div>
             </div>
           </div>
@@ -108,37 +103,48 @@ export default function QualityInspectionDashboard() {
               <thead>
                 <tr>
                   <th><input type="checkbox" /></th>
-                  <th>数据ID</th>
-                  <th>任务名称</th>
-                  <th>设备</th>
-                  <th>采集时间</th>
-                  <th>时长</th>
+                  <th>包ID</th>
+                  <th>所属任务</th>
+                  <th>来源状态</th>
+                  <th>记录总数</th>
+                  <th>质检进度</th>
                   <th>质检状态</th>
-                  <th>质检人</th>
-                  <th>质检时间</th>
+                  <th>最后更新</th>
                   <th>操作</th>
                 </tr>
               </thead>
               <tbody className="fade-rows">
                 {filteredData.map((t, idx) => {
                   const s = sMap[t.status];
+                  const percent = Math.round((t.audited / t.total) * 100);
                   return (
                     <tr key={idx}>
                       <td><input type="checkbox" /></td>
-                      <td className="tbl-link">{t.id}</td>
-                      <td>{t.name}</td>
-                      <td>{t.device}</td>
-                      <td>{t.time}</td>
-                      <td>{t.duration}</td>
-                      <td><span className={`badge-tag ${s.c}`}>{s.l}</span></td>
-                      <td>{t.inspector}</td>
-                      <td>{t.inspectTime}</td>
+                      <td className="tbl-link">
+                        <Link href={`/collection/qa/${t.id}`}>{t.id}</Link>
+                      </td>
+                      <td>{t.taskName}</td>
                       <td>
-                        <div className="act-btns">
-                          <button className="act-btn">查看</button><span className="act-sep">|</span>
-                          <button className="act-btn">通过</button><span className="act-sep">|</span>
-                          <button className="act-btn del" style={{ color: '#ff4d4f' }}>拒绝</button>
+                        {t.sourceStatus === 'completed' ? (
+                          <Tag color="success" style={{ margin: 0, borderRadius: 4 }}>已完成</Tag>
+                        ) : (
+                          <Tag color="purple" style={{ margin: 0, borderRadius: 4 }}>已暂停</Tag>
+                        )}
+                      </td>
+                      <td><b>{t.total}</b> 条</td>
+                      <td style={{ minWidth: 120 }}>
+                        <div style={{ fontSize: 12, marginBottom: 4, display: 'flex', justifyContent: 'space-between' }}>
+                          <span>{t.audited}/{t.total} 已审</span>
+                          <span>{percent}%</span>
                         </div>
+                        <Progress percent={percent} size="small" showInfo={false} strokeColor={percent === 100 ? '#52c41a' : '#1677ff'} />
+                      </td>
+                      <td><span className={`badge-tag ${s.c}`}>{s.l}</span></td>
+                      <td>{t.time}</td>
+                      <td>
+                        <Link href={`/collection/qa/${t.id}`}>
+                          <Button type="link" size="small" icon={<EyeOutlined />}>查看记录</Button>
+                        </Link>
                       </td>
                     </tr>
                   )
@@ -148,13 +154,11 @@ export default function QualityInspectionDashboard() {
           </div>
 
           <div className="pager" style={{ padding: '12px 24px' }}>
-            <span className="pager-info">共 <b>21,551</b> 条数据</span>
+            <span className="pager-info">共 <b>{qaData.length}</b> 个分包</span>
             <div className="pager-right">
               <select className="pager-size"><option>20 条/页</option></select>
               <button className="pager-btn" disabled>‹</button>
               <button className="pager-btn cur">1</button>
-              <button className="pager-btn">2</button>
-              <button className="pager-btn">3</button>
               <button className="pager-btn">›</button>
             </div>
           </div>

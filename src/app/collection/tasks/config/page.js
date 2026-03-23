@@ -96,10 +96,10 @@ export default function TaskConfigPage() {
                 transition={{ duration: 0.3 }}
                 style={{ padding: '24px', maxWidth: 1200, margin: '0 auto' }}
             >
-                <Card bordered={false} className="shadow-sm" style={{ borderRadius: '12px' }} styles={{ body: { padding: '32px' } }}>
+                <Card variant="borderless" className="shadow-sm" style={{ borderRadius: '12px' }} styles={{ body: { padding: '32px' } } }>
 
                     {/* Stepper Header */}
-                    <div style={{ padding: '0 100px', marginBottom: 48 }}>
+                    <div style={{ padding: '0 100px', marginBottom: 48  } }>
                         <Steps current={1} size="default">
                             <Step title="基础信息" description="已完成" />
                             <Step title="任务配置" description="进行中" />
@@ -107,11 +107,11 @@ export default function TaskConfigPage() {
                         </Steps>
                     </div>
 
-                    <div style={{ marginBottom: 32 }}>
+                    <div style={{ marginBottom: 32  } }>
                         <Row gutter={24} align="middle">
                             <Col span={14}>
                                 <Space size="large">
-                                    <span style={{ color: '#ff4d4f' }}>*</span>
+                                    <span style={{ color: '#ff4d4f'  } }>*</span>
                                     <Text strong>动作步骤</Text>
                                     <Radio.Group defaultValue="format">
                                         <Radio value="format">格式化步骤</Radio>
@@ -120,18 +120,18 @@ export default function TaskConfigPage() {
                                 </Space>
                             </Col>
                             <Col span={10}>
-                                <div style={{ display: 'flex', alignItems: 'center' }}>
-                                    <span style={{ color: '#ff4d4f', marginRight: 8 }}>*</span>
-                                    <Text strong style={{ marginRight: 16 }}>任务模板</Text>
+                                <div style={{ display: 'flex', alignItems: 'center'  } }>
+                                    <span style={{ color: '#ff4d4f', marginRight: 8  } }>*</span>
+                                    <Text strong style={{ marginRight: 16  } }>任务模板</Text>
                                     <Select defaultValue="线缆管理" style={{ width: 200 }} options={[{ value: '线缆管理', label: '线缆管理' }, { value: '桌面整理', label: '桌面整理' }]} />
                                 </div>
                             </Col>
                         </Row>
                     </div>
 
-                    <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <Text strong style={{ fontSize: 16 }}>格式化步骤配置</Text>
-                        <Button type="primary" icon={<PlusOutlined />} onClick={handleAddStep} style={{ background: '#69b1ff' }}>新增步骤</Button>
+                    <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center'  } }>
+                        <Text strong style={{ fontSize: 16  } }>格式化步骤配置</Text>
+                        <Button type="primary" icon={<PlusOutlined />} onClick={handleAddStep} style={{ background: '#69b1ff'  } }>新增步骤</Button>
                     </div>
 
                     <Table
@@ -143,10 +143,10 @@ export default function TaskConfigPage() {
                         style={{ marginBottom: 32 }}
                     />
 
-                    <Row gutter={48} style={{ marginBottom: 24 }}>
+                    <Row gutter={48} style={{ marginBottom: 24  } }>
                         <Col span={12}>
                             <Space>
-                                <span style={{ color: '#ff4d4f' }}>*</span>
+                                <span style={{ color: '#ff4d4f'  } }>*</span>
                                 <Text>采集数量</Text>
                                 <InputNumber placeholder="请输入采集数量" style={{ width: 200 }} />
                             </Space>
@@ -158,31 +158,31 @@ export default function TaskConfigPage() {
                                     <Upload>
                                         <Button type="primary" icon={<CloudUploadOutlined />}>上传文件</Button>
                                     </Upload>
-                                    <div style={{ marginTop: 8, color: '#bfbfbf', fontSize: 12 }}>请上传场景的layout文件</div>
+                                    <div style={{ marginTop: 8, color: '#bfbfbf', fontSize: 12  } }>请上传场景的layout文件</div>
                                 </div>
                             </Space>
                         </Col>
                     </Row>
 
-                    <div style={{ marginBottom: 24 }}>
+                    <div style={{ marginBottom: 24  } }>
                         <Space>
                             <Text>是否为货架</Text>
                             <Switch />
                         </Space>
                     </div>
 
-                    <Row gutter={24} style={{ marginBottom: 32 }}>
+                    <Row gutter={24} style={{ marginBottom: 32  } }>
                         <Col span={12}>
-                            <div style={{ marginBottom: 8 }}><Text>场景初始状态</Text></div>
+                            <div style={{ marginBottom: 8  } }><Text>场景初始状态</Text></div>
                             <TextArea placeholder="请描述场景初始状态" rows={4} maxLength={500} showCount />
                         </Col>
                         <Col span={12}>
-                            <div style={{ marginBottom: 8 }}><Text>英文场景初始状态</Text></div>
+                            <div style={{ marginBottom: 8  } }><Text>英文场景初始状态</Text></div>
                             <TextArea placeholder="请描述英文场景初始状态" rows={4} maxLength={500} showCount />
                         </Col>
                     </Row>
 
-                    <div style={{ textAlign: 'right', marginTop: 48, paddingTop: 24, borderTop: '1px solid #f0f0f0' }}>
+                    <div style={{ textAlign: 'right', marginTop: 48, paddingTop: 24, borderTop: '1px solid #f0f0f0'  } }>
                         <Space size="middle">
                             <Button size="large">取消</Button>
                             <Button size="large">上一步</Button>

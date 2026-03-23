@@ -20,7 +20,7 @@ export default function AnnotationProjects() {
   ];
 
   const columns = [
-    { title: '标注项目名称', dataIndex: 'name', key: 'name', render: text => <span style={{ fontWeight: 600 }}>{text}</span> },
+    { title: '标注项目名称', dataIndex: 'name', key: 'name', render: text => <span style={{ fontWeight: 600  } }>{text}</span> },
     { title: '标注类型', dataIndex: 'type', key: 'type', render: text => <Tag color="blue">{text}</Tag> },
     { 
       title: '整体进度', 
@@ -33,7 +33,7 @@ export default function AnnotationProjects() {
       dataIndex: 'annotators', 
       key: 'annotators',
       render: n => (
-        <Avatar.Group size="small" maxCount={3} maxStyle={{ color: '#fff', backgroundColor: '#94a3b8' }}>
+        <Avatar.Group size="small" maxCount={3} maxStyle={{ color: '#fff', backgroundColor: '#94a3b8'  } }>
           {Array.from({ length: n }).map((_, i) => <Avatar key={i} style={{ backgroundColor: ['#3b82f6', '#f59e0b', '#10b981'][i % 3] }} />)}
         </Avatar.Group>
       )
@@ -60,47 +60,47 @@ export default function AnnotationProjects() {
   return (
     <MainLayout>
       <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="v2-global-card">
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 24 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 24  } }>
           <div>
-            <Title level={3} style={{ margin: 0, color: '#0f172a' }}>标注项目管理</Title>
-            <p style={{ color: '#64748b', marginTop: 4 }}>管理所有发起的具身数据结构化目标项目，分配人员与标准。</p>
+            <Title level={3} style={{ margin: 0, color: '#0f172a'  } }>标注项目管理</Title>
+            <p style={{ color: '#64748b', marginTop: 4  } }>管理所有发起的具身数据结构化目标项目，分配人员与标准。</p>
           </div>
           <Space>
-            <Button type="primary" size="large" icon={<PlusOutlined />} style={{ background: '#0C182B', borderRadius: 8 }}>新建标注项目</Button>
+            <Button type="primary" size="large" icon={<PlusOutlined />} style={{ background: '#0C182B', borderRadius: 8  } }>新建标注项目</Button>
           </Space>
         </div>
 
-        <Card bordered={false} style={{ borderRadius: 10, marginBottom: 16, boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }} bodyStyle={{ padding: '20px 24px 4px' }}>
-          <Form form={form} labelCol={{ flex: '80px' }} wrapperCol={{ flex: 1 }}>
+        <Card variant="borderless" style={{ borderRadius: 10, marginBottom: 16, boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }} styles={{ body: { padding: '20px 24px 4px'  } } }>
+          <Form form={form} labelCol={{ flex: '80px' }} wrapperCol={{ flex: 1  } }>
             <Row gutter={24}>
               <Col span={8}>
-                <Form.Item name="name" label="项目名称" style={{ marginBottom: 16 }}>
+                <Form.Item name="name" label="项目名称" style={{ marginBottom: 16  } }>
                   <Input placeholder="请输入项目名称" />
                 </Form.Item>
               </Col>
               <Col span={8}>
-                <Form.Item name="type" label="标注类型" style={{ marginBottom: 16 }}>
+                <Form.Item name="type" label="标注类型" style={{ marginBottom: 16  } }>
                   <Select placeholder="请选择标注类型" />
                 </Form.Item>
               </Col>
               <Col span={8}>
-                <Form.Item name="status" label="项目状态" style={{ marginBottom: 16 }}>
+                <Form.Item name="status" label="项目状态" style={{ marginBottom: 16  } }>
                   <Select placeholder="请选择项目状态" />
                 </Form.Item>
               </Col>
               
-              <Col span={8} style={{ display: expand ? 'block' : 'none' }}>
-                <Form.Item name="creator" label="创建人" style={{ marginBottom: 16 }}>
+              <Col span={8} style={{ display: expand ? 'block' : 'none'  } }>
+                <Form.Item name="creator" label="创建人" style={{ marginBottom: 16  } }>
                   <Input placeholder="请输入创建人" />
                 </Form.Item>
               </Col>
-              <Col span={8} style={{ display: expand ? 'block' : 'none' }}>
-                <Form.Item name="time" label="创建时间" style={{ marginBottom: 16 }}>
+              <Col span={8} style={{ display: expand ? 'block' : 'none'  } }>
+                <Form.Item name="time" label="创建时间" style={{ marginBottom: 16  } }>
                   <Input placeholder="请选择时间范围" />
                 </Form.Item>
               </Col>
 
-              <Col span={expand ? 8 : 24} style={{ textAlign: 'right', marginBottom: 16 }}>
+              <Col span={expand ? 8 : 24} style={{ textAlign: 'right', marginBottom: 16  } }>
                 <Space>
                   <Button type="primary" htmlType="submit" icon={<SearchOutlined />}>查询</Button>
                   <Button onClick={() => form.resetFields()} icon={<ReloadOutlined />}>重置</Button>

@@ -33,19 +33,19 @@ export default function ReviewList() {
 
   return (
     <MainLayout>
-      <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} style={{ padding: 24, paddingBottom: 64 }}>
+      <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} style={{ padding: 24, paddingBottom: 64  } }>
         
         {/* filter-card */}
-        <Card bordered={false} style={{ borderRadius: 10, marginBottom: 16, boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }} bodyStyle={{ padding: '20px 24px 4px' }}>
-          <Form form={form} labelCol={{ flex: '80px' }} wrapperCol={{ flex: 1 }}>
+        <Card variant="borderless" style={{ borderRadius: 10, marginBottom: 16, boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }} styles={{ body: { padding: '20px 24px 4px'  } } }>
+          <Form form={form} labelCol={{ flex: '80px' }} wrapperCol={{ flex: 1  } }>
             <Row gutter={24}>
               <Col span={8}>
-                <Form.Item name="name" label="任务名称" style={{ marginBottom: 16 }}>
+                <Form.Item name="name" label="任务名称" style={{ marginBottom: 16  } }>
                   <Input placeholder="请输入任务名称" />
                 </Form.Item>
               </Col>
               <Col span={8}>
-                <Form.Item name="status" label="标注状态" style={{ marginBottom: 16 }}>
+                <Form.Item name="status" label="标注状态" style={{ marginBottom: 16  } }>
                   <Select placeholder="请选择状态">
                     <Select.Option value="all">全部</Select.Option>
                     <Select.Option value="pending">待标注</Select.Option>
@@ -55,12 +55,12 @@ export default function ReviewList() {
                 </Form.Item>
               </Col>
               <Col span={8}>
-                <Form.Item name="user" label="标注人" style={{ marginBottom: 16 }}>
+                <Form.Item name="user" label="标注人" style={{ marginBottom: 16  } }>
                   <Input placeholder="请输入标注人" />
                 </Form.Item>
               </Col>
 
-              <Col span={24} style={{ textAlign: 'right', marginBottom: 16 }}>
+              <Col span={24} style={{ textAlign: 'right', marginBottom: 16  } }>
                 <Space>
                   <Button type="primary" htmlType="submit" icon={<SearchOutlined />}>查询</Button>
                   <Button onClick={() => form.resetFields()} icon={<ReloadOutlined />}>重置</Button>
@@ -71,15 +71,15 @@ export default function ReviewList() {
         </Card>
 
         {/* Review stat cards */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 10, marginBottom: 12 }}>
-          <div className="qs-card"><div className="qs-val" style={{ color: '#1a73e8' }}>1,254</div><div className="qs-lbl">总标注数</div><div style={{ fontSize: 11, color: '#10b981', marginTop: 4 }}>较上月 ↑ 9.2%</div></div>
-          <div className="qs-card"><div className="qs-val" style={{ color: '#10b981' }}>60,402</div><div className="qs-lbl">已完成帧</div><div style={{ fontSize: 11, color: '#10b981', marginTop: 4 }}>较上月 ↑ 14.1%</div></div>
-          <div className="qs-card"><div className="qs-val" style={{ color: '#f59e0b' }}>47</div><div className="qs-lbl">待审核</div><div style={{ fontSize: 11, color: '#aaa', marginTop: 4 }}>今日新增 +3</div></div>
-          <div className="qs-card"><div className="qs-val" style={{ color: '#ef4444' }}>6</div><div className="qs-lbl">已驳回</div><div style={{ fontSize: 11, color: '#ef4444', marginTop: 4 }}>较昨日 ↑ 1</div></div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 10, marginBottom: 12  } }>
+          <div className="qs-card"><div className="qs-val" style={{ color: '#1a73e8'  } }>1,254</div><div className="qs-lbl">总标注数</div><div style={{ fontSize: 11, color: '#10b981', marginTop: 4  } }>较上月 ↑ 9.2%</div></div>
+          <div className="qs-card"><div className="qs-val" style={{ color: '#10b981'  } }>60,402</div><div className="qs-lbl">已完成帧</div><div style={{ fontSize: 11, color: '#10b981', marginTop: 4  } }>较上月 ↑ 14.1%</div></div>
+          <div className="qs-card"><div className="qs-val" style={{ color: '#f59e0b'  } }>47</div><div className="qs-lbl">待审核</div><div style={{ fontSize: 11, color: '#aaa', marginTop: 4  } }>今日新增 +3</div></div>
+          <div className="qs-card"><div className="qs-val" style={{ color: '#ef4444'  } }>6</div><div className="qs-lbl">已驳回</div><div style={{ fontSize: 11, color: '#ef4444', marginTop: 4  } }>较昨日 ↑ 1</div></div>
         </div>
 
         {/* card block */}
-        <div className="card" style={{ padding: 0 }}>
+        <div className="card" style={{ padding: 0  } }>
           <div className="tabs-bar">
             <div className="tabs-pill">
               <button className={`tab-pill ${activeTab === 'all' ? 'active' : ''}`} onClick={() => setActiveTab('all')}>
@@ -140,7 +140,7 @@ export default function ReviewList() {
                         <div className="act-btns">
                           <button className="act-btn">查看</button><span className="act-sep">|</span>
                           <button className="act-btn">通过</button><span className="act-sep">|</span>
-                          <button className="act-btn del" style={{ color: '#ff4d4f' }}>驳回</button>
+                          <button className="act-btn del" style={{ color: '#ff4d4f'  } }>驳回</button>
                         </div>
                       </td>
                     </tr>
