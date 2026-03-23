@@ -115,7 +115,14 @@ export default function TaskTemplates() {
                 { value: '零售数据', label: '零售数据' },
               ]}
             />
-            <Button type="primary" icon={<PlusOutlined />} size="small">新建模版</Button>
+            <Button 
+              type="primary" 
+              icon={<PlusOutlined />} 
+              size="small" 
+              onClick={() => router.push('/collection/templates/create')}
+            >
+              新建模版
+            </Button>
           </div>
         </div>
 
