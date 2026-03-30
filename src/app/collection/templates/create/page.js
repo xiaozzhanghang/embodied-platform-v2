@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import MainLayout from '@/components/MainLayout';
-import { Form, Input, Select, Button, Card, Space, Row, Col, Typography, Divider, Table, Alert, message } from 'antd';
+import { Form, Input, Select, Button, Card, Space, Row, Col, Typography, Divider, Table, Alert, message, Checkbox } from 'antd';
 import { 
   PlusOutlined, 
   LeftOutlined, 
@@ -283,6 +283,26 @@ export default function CreateTemplatePage() {
                     { value: 'WholeBody', label: '全身协同 (WholeBody)' },
                     { value: 'ArmOnly', label: '仅机械臂 (ArmOnly)' },
                   ]} />
+                </Form.Item>
+
+                <Divider style={{ margin: '24px 0 16px' }} />
+
+                <div style={{ marginBottom: 16 }}>
+                  <Text strong style={{ fontSize: 14 }}>质检标注配置</Text>
+                  <Text type="secondary" style={{ fontSize: 12, display: 'block', marginTop: 4 }}>
+                    选择在当前任务中允许审核员使用的空间和时间标记工具
+                  </Text>
+                </div>
+
+                <Form.Item 
+                  name="annotationTypes" 
+                  initialValue={['range', 'box', 'point']}
+                >
+                  <Checkbox.Group style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                    <Checkbox value="range">范围标注 (提取异常时段)</Checkbox>
+                    <Checkbox value="box">框选标注 (圈定异常区域)</Checkbox>
+                    <Checkbox value="point">打点标注 (标记异常方位)</Checkbox>
+                  </Checkbox.Group>
                 </Form.Item>
 
                 <div style={{ 

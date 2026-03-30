@@ -13,15 +13,10 @@ import {
   Col, 
   Select, 
   Card, 
-  Tooltip,
-  Modal,
-  Upload,
-  Dropdown,
-  Menu
+  Tooltip
 } from 'antd';
 import { 
   SearchOutlined, 
-  SyncOutlined, 
   PlusOutlined, 
   DownOutlined, 
   UpOutlined, 
@@ -29,19 +24,16 @@ import {
   EyeOutlined,
   EditOutlined,
   StopOutlined,
-  InfoCircleOutlined,
-  UploadOutlined,
-  EllipsisOutlined,
   ColumnHeightOutlined,
   SettingOutlined
 } from '@ant-design/icons';
 import { motion, AnimatePresence } from 'framer-motion';
+import Link from 'next/link';
 
 const { Title, Text } = Typography;
 
 export default function DeviceList() {
   const [expand, setExpand] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [form] = Form.useForm();
   
@@ -96,10 +88,14 @@ export default function DeviceList() {
       key: 'action',
       fixed: 'right',
       width: 180,
-      render: () => (
+      render: (_, record) => (
         <Space size="middle">
-          <Button type="link" size="small" icon={<EyeOutlined />}>查看</Button>
-          <Button type="link" size="small" icon={<EditOutlined />}>编辑</Button>
+          <Link href={`/collection/device-list/${record.key}`}>
+            <Button type="link" size="small" icon={<EyeOutlined />}>查看</Button>
+          </Link>
+          <Link href={`/collection/device-list/${record.key}/edit`}>
+            <Button type="link" size="small" icon={<EditOutlined />}>编辑</Button>
+          </Link>
           <Button type="link" size="small" danger icon={<StopOutlined />}>禁用</Button>
         </Space>
       ),
@@ -165,9 +161,11 @@ export default function DeviceList() {
         }}>
           <div style={{ fontSize: 16, fontWeight: 600, color: 'rgba(0,0,0,0.88)' }}>设备实例列表</div>
           <Space size="middle">
-            <Button type="primary" icon={<PlusOutlined />} onClick={() => setIsModalOpen(true)} style={{ borderRadius: 6 }}>
-              新建
-            </Button>
+            <Link href="/collection/device-list/create">
+              <Button type="primary" icon={<PlusOutlined />} style={{ borderRadius: 6 }}>
+                新建
+              </Button>
+            </Link>
             <Space size={12} style={{ marginLeft: 8, color: 'rgba(0,0,0,0.45)', fontSize: 16 }}>
               <Tooltip title="刷新"><ReloadOutlined style={{ cursor: 'pointer' }} /></Tooltip>
               <Tooltip title="密度"><ColumnHeightOutlined style={{ cursor: 'pointer' }} /></Tooltip>
@@ -224,57 +222,7 @@ export default function DeviceList() {
           }}
         />
 
-        {/* Add Device Modal (Fig 3) */}
-        <Modal 
-          title="添加设备" 
-          open={isModalOpen} 
-          onCancel={() => setIsModalOpen(false)} 
-          width={650}
-          footer={[
-            <Button key="cancel" onClick={() => setIsModalOpen(false)} style={{ borderRadius: 6 }}>取消</Button>,
-            <Button key="ok" type="primary" onClick={() => setIsModalOpen(false)} style={{ borderRadius: 6, background: '#3b82f6' }}>确定</Button>
-          ]}
-          centered
-          closeIcon={<span style={{ color: '#64748b', fontSize: 20 }}>×</span>}
-        >
-          <Form layout="horizontal" labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} style={{ marginTop: 24 }}>
-            <Form.Item label={<span style={{ fontWeight: 500 }}><span style={{ color: '#ff4d4f' }}>*</span> 设备名称</span>} colon={false}>
-              <Input placeholder="请输入设备名称" suffix="0 / 50" style={{ borderRadius: 6 }} />
-            </Form.Item>
-            
-            <Form.Item label={<span style={{ fontWeight: 500 }}>英文名称 <Tooltip title="System ID"><InfoCircleOutlined style={{ color: '#64748b' }} /></Tooltip></span>} colon={false}>
-              <Input placeholder="请输入英文名称" suffix="0 / 50" style={{ borderRadius: 6 }} />
-            </Form.Item>
 
-            <Form.Item label={<span style={{ fontWeight: 500 }}><span style={{ color: '#ff4d4f' }}>*</span> 设备编号</span>} colon={false}>
-              <Input placeholder="请输入设备编号" suffix="0 / 50" style={{ borderRadius: 6 }} />
-            </Form.Item>
-
-            <Form.Item label={<span style={{ fontWeight: 500 }}><span style={{ color: '#ff4d4f' }}>*</span> 设备类型</span>} colon={false}>
-              <Select placeholder="请选择设备类型" style={{ width: '100%' }} />
-            </Form.Item>
-
-            <Form.Item label={<span style={{ fontWeight: 500 }}>URDF</span>} colon={false}>
-              <Space size="middle">
-                <Button type="primary" icon={<UploadOutlined />} style={{ borderRadius: 6, background: '#3b82f6' }}>上传URDF文件</Button>
-                <Text type="secondary" style={{ fontSize: 12, color: '#94a3b8' }}>可上传最多1份urdf格式的文件</Text>
-              </Space>
-            </Form.Item>
-
-            <Form.Item label={<span style={{ fontWeight: 500 }}>设备图片</span>} colon={false}>
-              <div>
-                <Upload listType="picture-card" showUploadList={false}>
-                  <div style={{ color: '#94a3b8' }}>
-                    <PlusOutlined style={{ fontSize: 24 }} />
-                  </div>
-                </Upload>
-                <div style={{ marginTop: 8, color: '#94a3b8', fontSize: 12 }}>
-                  可上传最多5张单个不超过2MB且格式为jpg/jpeg/png/gif的图片
-                </div>
-              </div>
-            </Form.Item>
-          </Form>
-        </Modal>
       </motion.div>
     </MainLayout>
   );

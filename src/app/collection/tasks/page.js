@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import MainLayout from '@/components/MainLayout';
 import { motion } from 'framer-motion';
 import { ReloadOutlined, SettingOutlined, DownOutlined, UpOutlined, SearchOutlined } from '@ant-design/icons';
-import { Tooltip, Card, Form, Row, Col, Input, Select, Button, DatePicker, Space, Modal, Tabs } from 'antd';
+import { Tooltip, Card, Form, Row, Col, Input, Select, Button, DatePicker, Space, Modal, Tabs, message, Checkbox } from 'antd';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import ChatCreateDrawer from '@/components/ChatCreateDrawer';
@@ -18,6 +18,10 @@ export default function TaskManagement() {
   const [selectedTask, setSelectedTask] = useState(null);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [form] = Form.useForm();
+  
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [assignModalVisible, setAssignModalVisible] = useState(false);
+  const [assignForm] = Form.useForm();
 
   const tasks = [
     {
@@ -221,7 +225,21 @@ export default function TaskManagement() {
               >
                 ✨ AI 助手建单
               </button>
-              <button className="btn btn-default btn-sm" style={{ color: '#666' }}>☰ 批量添加标注</button>
+              <button 
+                className={`btn btn-sm ${selectedRowKeys.length > 0 ? '' : 'disabled'}`}
+                style={{ 
+                  color: selectedRowKeys.length > 0 ? '#1677ff' : '#bfbfbf', 
+                  borderColor: selectedRowKeys.length > 0 ? '#91caff' : '#d9d9d9',
+                  background: selectedRowKeys.length > 0 ? '#f0f7ff' : '#f5f5f5',
+                  cursor: selectedRowKeys.length > 0 ? 'pointer' : 'not-allowed',
+                  fontWeight: selectedRowKeys.length > 0 ? 500 : 400
+                }}
+                onClick={() => {
+                  if (selectedRowKeys.length > 0) setAssignModalVisible(true);
+                }}
+              >
+                ☰ 批量添加标注
+              </button>
               <Tooltip title="刷新">
                 <div className="icon-btn"><ReloadOutlined /></div>
               </Tooltip>
@@ -238,7 +256,17 @@ export default function TaskManagement() {
             <table className="tbl" style={{ tableLayout: 'fixed', width: '2800px'  } }>
               <thead>
                 <tr>
-                  <th style={{ width: 45, textAlign: 'center', position: 'sticky', left: 0, zIndex: 10, background: '#fafafa', paddingLeft: 12, paddingRight: 0  } }><input type="checkbox" /></th>
+                  <th style={{ width: 45, textAlign: 'center', position: 'sticky', left: 0, zIndex: 10, background: '#fafafa', paddingLeft: 12, paddingRight: 0  } }>
+                    <input 
+                      type="checkbox" 
+                      style={{ cursor: 'pointer' }}
+                      checked={tasks.length > 0 && selectedRowKeys.length === tasks.length}
+                      onChange={(e) => {
+                        if (e.target.checked) setSelectedRowKeys(tasks.map(t => t.id));
+                        else setSelectedRowKeys([]);
+                      }}
+                    />
+                  </th>
                   <th style={{ width: 100, position: 'sticky', left: 45, zIndex: 10, background: '#fafafa', paddingLeft: 0  } }>任务ID <SortIcon /></th>
                   <th style={{ width: 180, position: 'sticky', left: 145, zIndex: 10, background: '#fafafa'  } }>任务名称</th>
                   <th style={{ width: 180  } }>项目</th>
@@ -272,7 +300,17 @@ export default function TaskManagement() {
                   const s = sMap[t.status];
                   return (
                     <tr key={idx}>
-                      <td style={{ textAlign: 'center', position: 'sticky', left: 0, background: '#fff', paddingLeft: 12, paddingRight: 0  } }><input type="checkbox" /></td>
+                      <td style={{ textAlign: 'center', position: 'sticky', left: 0, background: '#fff', paddingLeft: 12, paddingRight: 0  } }>
+                        <input 
+                          type="checkbox" 
+                          style={{ cursor: 'pointer' }}
+                          checked={selectedRowKeys.includes(t.id)}
+                          onChange={(e) => {
+                            if (e.target.checked) setSelectedRowKeys([...selectedRowKeys, t.id]);
+                            else setSelectedRowKeys(selectedRowKeys.filter(id => id !== t.id));
+                          }}
+                        />
+                      </td>
                       <td style={{ position: 'sticky', left: 45, background: '#fff', fontWeight: 500, paddingLeft: 0  } }>{t.id}</td>
                       <td style={{ position: 'sticky', left: 145, background: '#fff'  } }>
                         <Link href={`/collection/tasks/${t.id}`}>
@@ -375,6 +413,58 @@ export default function TaskManagement() {
             </div>
           </div>
         </div>
+      </Modal>
+
+      <Modal
+        title="任务分配"
+        open={assignModalVisible}
+        onCancel={() => {
+          setAssignModalVisible(false);
+          assignForm.resetFields();
+        }}
+        onOk={() => {
+          assignForm.validateFields().then(values => {
+            message.success(`操作成功！已批量为 ${selectedRowKeys.length} 个任务分配人员`);
+            setAssignModalVisible(false);
+            setSelectedRowKeys([]);
+            assignForm.resetFields();
+          });
+        }}
+        okText="确定"
+        cancelText="取消"
+        width={480}
+      >
+        <Form form={assignForm} layout="horizontal" labelCol={{ span: 5 }} wrapperCol={{ span: 18 }} style={{ marginTop: 24 }}>
+          <Form.Item name="annotationTypes" label="标注类型" rules={[{ required: true, message: '请至少选择一种标注类型' }]}>
+            <Checkbox.Group>
+              <Checkbox value="point" style={{ color: '#1677ff' }}>点标注</Checkbox>
+              <Checkbox value="range" style={{ color: '#1677ff' }}>范围标注</Checkbox>
+              <Checkbox value="box" style={{ color: '#1677ff' }}>框选标注</Checkbox>
+            </Checkbox.Group>
+          </Form.Item>
+          
+          <Form.Item name="inspector" label="质检员" initialValue="admin">
+            <Select placeholder="请选择质检员">
+              <Select.Option value="admin">天奇管理员</Select.Option>
+              <Select.Option value="qc1">质检员小王</Select.Option>
+            </Select>
+          </Form.Item>
+
+          <Form.Item name="annotator" label="标注员" rules={[{ required: true, message: '请选择标注员' }]}>
+            <Select placeholder="请选择标注员">
+              <Select.Option value="a1">标注员张扬</Select.Option>
+              <Select.Option value="a2">标注员周敏</Select.Option>
+              <Select.Option value="ateam">外包团队 A 组</Select.Option>
+            </Select>
+          </Form.Item>
+          
+          <Form.Item name="reviewer" label="审核员" rules={[{ required: true, message: '请选择审核员' }]}>
+            <Select placeholder="请选择审核员">
+              <Select.Option value="r1">高级审核员刘云</Select.Option>
+              <Select.Option value="r2">数据运营组</Select.Option>
+            </Select>
+          </Form.Item>
+        </Form>
       </Modal>
 
       <ChatCreateDrawer 

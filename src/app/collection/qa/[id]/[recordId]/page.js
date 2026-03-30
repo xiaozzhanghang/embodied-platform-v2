@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Button, Space, Tag, Typography, Progress, Badge, Card, Divider } from 'antd';
+import { Layout, Button, Slider, Typography, Modal, Timeline, Steps, Card, Space, Tag, Input, Badge, message, Popover, Select, Radio, Tooltip, Divider, Progress } from 'antd';
 import { 
   ArrowLeftOutlined, 
   CaretRightFilled, 
@@ -30,7 +30,6 @@ import {
   EditOutlined,
   PlusOutlined
 } from '@ant-design/icons';
-import { Input, Tooltip, Popover } from 'antd';
 import MainLayout from '@/components/MainLayout';
 import Link from 'next/link';
 
@@ -45,27 +44,32 @@ const ASSETS = {
 };
 
 // Task Step component for the sidebar
-const TaskStep = ({ number, title, status, isActive, progress = 0, time = '00:03:15' }) => {
+const TaskStep = ({ id, number, title, status, isActive, onClick, progress, time, initialStart, initialEnd, annotations = [], annotationMode, onAddRange, onAddPoint, onAddBox, onDeleteAnno, allowedTools = ['point', 'range', 'box'] }) => {
+  const [startFrame, setStartFrame] = useState(initialStart);
+  const [endFrame, setEndFrame] = useState(initialEnd);
   const getStatusIcon = () => {
     if (status === 'done') return <CheckCircleFilled style={{ color: '#52c41a' }} />;
-    if (status === 'active') return <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#fff', border: '2px solid #fff' }} />;
+    if (isActive) return <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#fff', border: '2px solid #fff' }} />;
     return <InfoCircleOutlined style={{ color: '#bfbfbf' }} />;
   };
 
   return (
-    <div style={{ 
-      padding: '12px 16px', 
-      background: isActive ? '#1890ff' : '#fff', 
-      borderRadius: 12, 
-      marginBottom: 12,
-      border: isActive ? 'none' : '1px solid #f0f0f0',
-      boxShadow: isActive ? '0 8px 16px rgba(24, 144, 255, 0.25)' : 'none',
-      transition: 'all 0.3s ease',
-      cursor: 'pointer',
-      position: 'relative',
-      overflow: 'hidden'
-    }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: isActive ? 8 : 0 }}>
+    <div 
+      onClick={status !== 'done' ? onClick : undefined}
+      style={{ 
+        padding: '12px 16px', 
+        background: isActive ? '#1890ff' : '#fff', 
+        borderRadius: 12, 
+        marginBottom: 12,
+        border: isActive ? 'none' : '1px solid #f0f0f0',
+        boxShadow: isActive ? '0 8px 16px rgba(24, 144, 255, 0.25)' : 'none',
+        transition: 'all 0.3s ease',
+        cursor: status !== 'done' ? 'pointer' : 'default',
+        position: 'relative',
+        overflow: 'hidden'
+      }}
+    >
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: isActive ? 12 : 0 }}>
         <Space size={12}>
           <div style={{ 
             width: 24, height: 24, borderRadius: '50%', 
@@ -84,24 +88,70 @@ const TaskStep = ({ number, title, status, isActive, progress = 0, time = '00:03
             {title}
           </Text>
         </Space>
-        <Space size={8}>
-          {isActive && <Text style={{ color: '#fff', fontSize: 13 }}>{time}</Text>}
-          <div style={{ display: 'flex', alignItems: 'center' }}>{getStatusIcon()}</div>
-        </Space>
+        {isActive && <Text style={{ color: '#fff', fontSize: 13 }}>{time}</Text>}
+        {!isActive && <div style={{ display: 'flex', alignItems: 'center' }}>{getStatusIcon()}</div>}
       </div>
 
       {isActive && (
-        <motion.div initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }}>
-          <Text style={{ display: 'block', color: 'rgba(255,255,255,0.8)', fontSize: 11, marginBottom: 8 }}>
-            Active - {time}
-          </Text>
-          <Progress 
-            percent={progress} 
-            size="small" 
-            showInfo={false} 
-            strokeColor="#fff" 
-            trailColor="rgba(255,255,255,0.2)" 
-          />
+        <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} style={{ background: 'rgba(255,255,255,0.1)', borderRadius: 8, padding: 12, marginTop: 8 }}>
+          
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <Text style={{ color: 'rgba(255,255,255,0.6)', fontSize: 10, marginBottom: 2 }}>开始帧</Text>
+              <Input size="small" value={startFrame} onChange={(e) => setStartFrame(e.target.value)} style={{ width: 60, background: 'rgba(255,255,255,0.2)', border: 'none', color: '#fff', textAlign: 'center', borderColor: 'transparent' }} />
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <Text style={{ color: 'rgba(255,255,255,0.6)', fontSize: 10, marginBottom: 2 }}>结束帧</Text>
+              <Input size="small" value={endFrame} onChange={(e) => setEndFrame(e.target.value)} style={{ width: 60, background: 'rgba(255,255,255,0.2)', border: 'none', color: '#fff', textAlign: 'center', borderColor: 'transparent' }} />
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <Text style={{ color: 'rgba(255,255,255,0.6)', fontSize: 10, marginBottom: 2 }}>总共</Text>
+              <Input size="small" value={Math.max(0, (parseInt(endFrame) || 0) - (parseInt(startFrame) || 0) + 1)} style={{ width: 60, background: 'rgba(255,255,255,0.2)', border: 'none', color: '#fff', textAlign: 'center' }} readOnly />
+            </div>
+          </div>
+          
+          {allowedTools.includes('range') && (
+            <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
+              <Button 
+                size="small" 
+                type={annotationMode === 'range' ? 'primary' : 'default'} 
+                style={{ flex: 1, borderColor: annotationMode === 'range' ? '#1890ff' : 'rgba(255,255,255,0.4)', color: '#fff', background: annotationMode === 'range' ? '#1890ff' : 'transparent', fontSize: 12 }} 
+                icon={<SwapOutlined />} 
+                onClick={(e) => { e.stopPropagation(); onAddRange(); }}
+              >
+                {annotationMode === 'range' ? '请在底部时间轴拖拽' : '提取异常时段'}
+              </Button>
+            </div>
+          )}
+          {(allowedTools.includes('box') || allowedTools.includes('point')) && (
+            <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
+              {allowedTools.includes('box') && (
+                <Button size="small" type={annotationMode === 'box' ? 'primary' : 'default'} style={{ flex: 1, borderColor: annotationMode === 'box' ? '#1890ff' : 'rgba(255,255,255,0.4)', color: '#fff', background: annotationMode === 'box' ? '#1890ff' : 'transparent', fontSize: 12 }} icon={<BorderOutlined />} onClick={(e) => { e.stopPropagation(); onAddBox(); }}>{annotationMode === 'box' ? '请在画面框选' : '异常区域框'}</Button>
+              )}
+              {allowedTools.includes('point') && (
+                <Button size="small" type={annotationMode === 'point' ? 'primary' : 'default'} style={{ flex: 1, borderColor: annotationMode === 'point' ? '#1890ff' : 'rgba(255,255,255,0.4)', color: '#fff', background: annotationMode === 'point' ? '#1890ff' : 'transparent', fontSize: 12 }} icon={<PushpinOutlined />} onClick={(e) => { e.stopPropagation(); onAddPoint(); }}>{annotationMode === 'point' ? '请点选画面' : '异常定位点'}</Button>
+              )}
+            </div>
+          )}
+
+          {annotations.length > 0 && (
+             <div style={{ background: 'rgba(0,0,0,0.15)', borderRadius: 6, padding: '8px 12px' }}>
+                <Text style={{ color: 'rgba(255,255,255,0.85)', fontSize: 11, display: 'block', marginBottom: 6, fontWeight: 500 }}>区域帧管理 (异常记录)</Text>
+                {annotations.map(anno => (
+                  <div key={anno.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 0', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <div style={{ width: 6, height: 6, borderRadius: '50%', background: anno.color }} />
+                      <Text style={{ color: '#fff', fontSize: 11 }}>{anno.label}</Text>
+                    </div>
+                    <Space size={8}>
+                      <Text style={{ color: 'rgba(255,255,255,0.6)', fontSize: 10 }}>第{anno.frame}帧</Text>
+                      <DeleteOutlined style={{ color: 'rgba(255,255,255,0.6)', fontSize: 12, cursor: 'pointer' }} onClick={(e) => { e.stopPropagation(); onDeleteAnno(anno.id); }} />
+                    </Space>
+                  </div>
+                ))}
+             </div>
+          )}
+
         </motion.div>
       )}
 
@@ -377,74 +427,9 @@ const CameraView = ({
 
 // --- New Annotation Components ---
 
-const AnnotationToolbar = ({ mode, setMode }) => (
-  <div className="annotation-toolbar">
-    <div className="annotation-toolbar-title">标注工具栏</div>
-    <div className="annotation-tool-group">
-      <Tooltip title="点标注 (点击视频)">
-        <div 
-          className={`annotation-tool-btn ${mode === 'point' ? 'active' : ''}`}
-          onClick={() => setMode(mode === 'point' ? null : 'point')}
-        >
-          <PushpinOutlined className="tool-icon" />
-          <span className="tool-label">点标注</span>
-        </div>
-      </Tooltip>
-      <Tooltip title="时段标注 (在时间轴上拖拽)">
-        <div 
-          className={`annotation-tool-btn ${mode === 'range' ? 'active' : ''}`}
-          onClick={() => setMode(mode === 'range' ? null : 'range')}
-        >
-          <SwapOutlined className="tool-icon" />
-          <span className="tool-label">时段标注</span>
-        </div>
-      </Tooltip>
-      <Tooltip title="框标注 (拖拽视频画面)">
-        <div 
-          className={`annotation-tool-btn ${mode === 'box' ? 'active' : ''}`}
-          onClick={() => setMode(mode === 'box' ? null : 'box')}
-        >
-          <BorderOutlined className="tool-icon" />
-          <span className="tool-label">框标注</span>
-        </div>
-      </Tooltip>
-    </div>
-  </div>
-);
 
-const AnnotationList = ({ annotations, onDelete, onSelectItem }) => (
-  <div className="annotation-list" style={{ marginTop: 24 }}>
-    <div className="annotation-list-title">
-      标注数据
-      <span className="annotation-list-count">{annotations.length}</span>
-    </div>
-    {annotations.length === 0 ? (
-      <div className="annotation-empty">
-        <YoutubeOutlined className="annotation-empty-icon" />
-        <div>目前暂无任何标注数据</div>
-      </div>
-    ) : (
-      <div style={{ maxHeight: 300, overflowY: 'auto' }}>
-        {annotations.map(anno => (
-          <div key={anno.id} className="annotation-item" onClick={() => onSelectItem(anno)}>
-            <div className="annotation-item-dot" style={{ color: anno.color, backgroundColor: anno.color }} />
-            <div className="annotation-item-info">
-              <div className="annotation-item-label">{anno.label}</div>
-              <div className="annotation-item-meta">
-                {anno.type === 'range' ? `第 ${anno.start}-${anno.end} 帧` : `第 ${anno.frame} 帧`}
-                {anno.type === 'point' && ` • 坐标 (${Math.round(anno.x)}, ${Math.round(anno.y)})`}
-              </div>
-            </div>
-            <DeleteOutlined 
-              className="annotation-item-delete" 
-              onClick={(e) => { e.stopPropagation(); onDelete(anno.id); }} 
-            />
-          </div>
-        ))}
-      </div>
-    )}
-  </div>
-);
+// --- Annotation Components ---
+
 
 const AnnotationPopover = ({ annotation, onSave, onCancel }) => {
   const [label, setLabel] = React.useState(annotation.label || '');
@@ -493,20 +478,47 @@ export default function AdvancedAuditPage() {
   const [playing, setPlaying] = useState(false);
 
   // --- Annotation State ---
-  const [annotationMode, setAnnotationMode] = useState(null); // 'point' | 'range' | 'box' | null
+  const [annotationMode, setAnnotationMode] = useState(null); // 'point' | 'box' | 'range' | null
   const [annotations, setAnnotations] = useState([]);
   const [editingAnnotation, setEditingAnnotation] = useState(null);
   const [currentFrame, setCurrentFrame] = useState(106);
+  const [activeStepId, setActiveStepId] = useState(2); // ID to track which step is active
+  
+  // Layout Modes
+  const [viewMode, setViewMode] = useState('grid'); // 'grid' | 'single'
+  const [focusedCameraIndex, setFocusedCameraIndex] = useState(1);
+  const [allowedTools] = useState(['point', 'range', 'box']); // Base configuration mock
+  
+  // Range dragging state
   const [isRangeDragging, setIsRangeDragging] = useState(false);
   const [rangeStart, setRangeStart] = useState(null);
   const [rangeEnd, setRangeEnd] = useState(null);
+  const [resizeHandle, setResizeHandle] = useState(null); // { id, edge: 'start' | 'end' }
+
+  const handleSetAnnotationMode = (mode) => {
+    if (annotationMode === mode) {
+      setAnnotationMode(null);
+      setViewMode('grid');
+    } else {
+      setAnnotationMode(mode);
+      if (mode === 'point' || mode === 'box') {
+        setViewMode('single');
+      } else {
+        setViewMode('grid');
+      }
+      if (mode === 'range') message.info('提示: 请在底部蓝色时间轴上左右拖拽提取片段');
+      if (mode === 'box') message.info('提示: 请在左侧视频画面上拖拽框选异常区域');
+      if (mode === 'point') message.info('提示: 请在左侧视频画面上直接点击标记异常点');
+    }
+  };
 
   const handleAddAnnotation = (basicData) => {
     setEditingAnnotation({
       ...basicData,
       id: null,
-      label: '',
-      color: '#1890ff'
+      label: `异常标记 (步骤 ${activeStepId})`, // Prefill with step context
+      color: '#ff4d4f', // Default red for errors
+      stepId: activeStepId // Link to the current task step
     });
   };
 
@@ -526,6 +538,11 @@ export default function AdvancedAuditPage() {
   };
 
   // Range dragging logic for footer timeline
+  const onHandleMouseDown = (e, id, edge) => {
+    e.stopPropagation();
+    setResizeHandle({ id, edge });
+  };
+
   const onRangeMouseDown = (e) => {
     if (annotationMode !== 'range') return;
     const rect = e.currentTarget.getBoundingClientRect();
@@ -536,25 +553,53 @@ export default function AdvancedAuditPage() {
   };
 
   const onRangeMouseMove = (e) => {
-    if (!isRangeDragging) return;
     const rect = e.currentTarget.getBoundingClientRect();
     const percent = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100));
-    setRangeEnd(percent);
+    
+    if (isRangeDragging) {
+      setRangeEnd(percent);
+    } else if (resizeHandle) {
+      const frame = Math.round(percent * 5.3); // Map percent to frame (max ~530)
+      setAnnotations(annotations.map(a => {
+        if (a.id === resizeHandle.id) {
+          if (resizeHandle.edge === 'start') {
+            return { ...a, start: Math.min(frame, a.end - 1) }; // Prevent crossing
+          } else {
+            return { ...a, end: Math.max(frame, a.start + 1) };
+          }
+        }
+        return a;
+      }));
+    }
   };
 
   const onRangeMouseUp = () => {
-    if (!isRangeDragging) return;
-    setIsRangeDragging(false);
-    if (Math.abs(rangeStart - rangeEnd) > 2) {
-      handleAddAnnotation({
-        type: 'range',
-        start: Math.round(Math.min(rangeStart, rangeEnd) * 5.3), // map to frames
-        end: Math.round(Math.max(rangeStart, rangeEnd) * 5.3)
-      });
+    if (isRangeDragging) {
+      setIsRangeDragging(false);
+      if (rangeStart !== null && rangeEnd !== null && Math.abs(rangeStart - rangeEnd) > 2) {
+        handleAddAnnotation({
+          type: 'range',
+          start: Math.round(Math.min(rangeStart, rangeEnd) * 5.3), // map to frames
+          end: Math.round(Math.max(rangeStart, rangeEnd) * 5.3)
+        });
+      }
+      setRangeStart(null);
+      setRangeEnd(null);
     }
-    setRangeStart(null);
-    setRangeEnd(null);
+    if (resizeHandle) {
+      setResizeHandle(null);
+    }
   };
+
+  // Add global mouse up listener for robustness when dragging out of bounds
+  React.useEffect(() => {
+    const handleMouseUp = () => {
+      if (resizeHandle) setResizeHandle(null);
+      if (isRangeDragging) onRangeMouseUp();
+    };
+    window.addEventListener('mouseup', handleMouseUp);
+    return () => window.removeEventListener('mouseup', handleMouseUp);
+  }, [resizeHandle, isRangeDragging, rangeStart, rangeEnd]);
 
   return (
     <MainLayout>
@@ -606,53 +651,105 @@ export default function AdvancedAuditPage() {
           />
         )}
 
-        {/* 2x2 Grid Layout Content Area */}
+        {/* Dynamic Content Area */}
         <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
         
-        {/* Main 2x2 View Grid */}
-        <div style={{ 
-          flex: 1, 
-          display: 'grid', 
-          gridTemplateColumns: '1fr 1fr', 
-          gridTemplateRows: '1fr 1fr', 
-          gap: 16,
-          padding: '16px 20px',
-          overflowY: 'auto'
-        }}>
-            <CameraView 
-             title="左侧手部相机 (左)" 
-             bgUrl={ASSETS.HAND_LEFT} 
-             headerInfo={{ tag: 'HAND_L' }} 
-             annotationMode={annotationMode}
-             annotations={annotations}
-             onAddAnnotation={handleAddAnnotation}
-             currentFrame={currentFrame}
-           />
-           <CameraView 
-             title="头部主视角相机 (左)" 
-             bgUrl={ASSETS.HEAD_MAIN} 
-             headerInfo={{ tag: 'HEAD_L' }} 
-             annotationMode={annotationMode}
-             annotations={annotations}
-             onAddAnnotation={handleAddAnnotation}
-             currentFrame={currentFrame}
-           />
-           <CameraView 
-             title="右侧手部相机 (右)" 
-             bgUrl={ASSETS.HAND_RIGHT} 
-             headerInfo={{ tag: 'HAND_R' }} 
-             annotationMode={annotationMode}
-             annotations={annotations}
-             onAddAnnotation={handleAddAnnotation}
-             currentFrame={currentFrame}
-           />
-           <CameraView 
-             title="机器人3D模型 (运动学)" 
-             bgUrl={ASSETS.IK_VIZ} 
-             isModel={true} 
-             headerInfo={{ tag: '3D_MODEL' }} 
-           />
-        </div>
+        {/* Main View Area */}
+        {viewMode === 'grid' ? (
+          <div style={{ 
+            flex: 1, 
+            display: 'grid', 
+            gridTemplateColumns: '1fr 1fr', 
+            gridTemplateRows: '1fr 1fr', 
+            gap: 16,
+            padding: '16px 20px',
+            overflowY: 'auto'
+          }}>
+             {[
+              { id: 0, title: "左侧手部相机 (左)", bgUrl: ASSETS.HAND_LEFT, tag: 'HAND_L', isModel: false },
+              { id: 1, title: "头部主视角 (主)", bgUrl: ASSETS.HEAD_MAIN, tag: 'HEAD_L', isModel: false },
+              { id: 2, title: "右侧手部相机 (右)", bgUrl: ASSETS.HAND_RIGHT, tag: 'HAND_R', isModel: false },
+              { id: 3, title: "机器人3D模型 (运动学)", bgUrl: ASSETS.IK_VIZ, tag: '3D_MODEL', isModel: true }
+             ].map(cam => (
+                <CameraView 
+                  key={cam.id}
+                  title={cam.title} 
+                  bgUrl={cam.bgUrl} 
+                  headerInfo={{ tag: cam.tag }} 
+                  isModel={cam.isModel}
+                  annotationMode={annotationMode}
+                  annotations={annotations}
+                  onAddAnnotation={handleAddAnnotation}
+                  currentFrame={currentFrame}
+                />
+             ))}
+          </div>
+        ) : (
+          <div style={{ 
+            flex: 1, 
+            display: 'flex', 
+            flexDirection: 'column', 
+            overflow: 'hidden',
+             background: '#eaeff3'
+          }}>
+             <div style={{ padding: '12px 24px', background: '#fff', borderBottom: '1px solid #e8e8e8', display: 'flex', justifyContent: 'center' }}>
+                <Radio.Group 
+                  value={focusedCameraIndex} 
+                  onChange={e => setFocusedCameraIndex(e.target.value)}
+                  optionType="button"
+                  buttonStyle="solid"
+                >
+                  {[
+                    { id: 0, title: "左侧手部相机 (左)", bgUrl: ASSETS.HAND_LEFT, tag: 'HAND_L', isModel: false },
+                    { id: 1, title: "头部主视角 (主)", bgUrl: ASSETS.HEAD_MAIN, tag: 'HEAD_L', isModel: false },
+                    { id: 2, title: "右侧手部相机 (右)", bgUrl: ASSETS.HAND_RIGHT, tag: 'HAND_R', isModel: false },
+                    { id: 3, title: "机器人仿真 (运动学)", bgUrl: ASSETS.IK_VIZ, tag: '3D_MODEL', isModel: true }
+                  ].map(cam => (
+                    <Radio.Button key={cam.id} value={cam.id}>{cam.title.split(' ')[0]}</Radio.Button>
+                  ))}
+                </Radio.Group>
+             </div>
+             <div style={{ flex: 1, minHeight: 0, padding: 24 }}>
+                {[
+                  { id: 0, title: "左侧手部相机 (左)", bgUrl: ASSETS.HAND_LEFT, tag: 'HAND_L', isModel: false },
+                  { id: 1, title: "头部主视角 (主)", bgUrl: ASSETS.HEAD_MAIN, tag: 'HEAD_L', isModel: false },
+                  { id: 2, title: "右侧手部相机 (右)", bgUrl: ASSETS.HAND_RIGHT, tag: 'HAND_R', isModel: false },
+                  { id: 3, title: "机器人3D模型 (运动学)", bgUrl: ASSETS.IK_VIZ, tag: '3D_MODEL', isModel: true }
+                ][focusedCameraIndex] && (
+                  <CameraView 
+                    title={[
+                      { id: 0, title: "左侧手部相机 (左)", bgUrl: ASSETS.HAND_LEFT, tag: 'HAND_L', isModel: false },
+                      { id: 1, title: "头部主视角 (主)", bgUrl: ASSETS.HEAD_MAIN, tag: 'HEAD_L', isModel: false },
+                      { id: 2, title: "右侧手部相机 (右)", bgUrl: ASSETS.HAND_RIGHT, tag: 'HAND_R', isModel: false },
+                      { id: 3, title: "机器人3D模型 (运动学)", bgUrl: ASSETS.IK_VIZ, tag: '3D_MODEL', isModel: true }
+                    ][focusedCameraIndex].title} 
+                    bgUrl={[
+                      { id: 0, title: "左侧手部相机 (左)", bgUrl: ASSETS.HAND_LEFT, tag: 'HAND_L', isModel: false },
+                      { id: 1, title: "头部主视角 (主)", bgUrl: ASSETS.HEAD_MAIN, tag: 'HEAD_L', isModel: false },
+                      { id: 2, title: "右侧手部相机 (右)", bgUrl: ASSETS.HAND_RIGHT, tag: 'HAND_R', isModel: false },
+                      { id: 3, title: "机器人3D模型 (运动学)", bgUrl: ASSETS.IK_VIZ, tag: '3D_MODEL', isModel: true }
+                    ][focusedCameraIndex].bgUrl} 
+                    headerInfo={{ tag: [
+                      { id: 0, title: "左侧手部相机 (左)", bgUrl: ASSETS.HAND_LEFT, tag: 'HAND_L', isModel: false },
+                      { id: 1, title: "头部主视角 (主)", bgUrl: ASSETS.HEAD_MAIN, tag: 'HEAD_L', isModel: false },
+                      { id: 2, title: "右侧手部相机 (右)", bgUrl: ASSETS.HAND_RIGHT, tag: 'HAND_R', isModel: false },
+                      { id: 3, title: "机器人3D模型 (运动学)", bgUrl: ASSETS.IK_VIZ, tag: '3D_MODEL', isModel: true }
+                    ][focusedCameraIndex].tag }} 
+                    isModel={[
+                      { id: 0, title: "左侧手部相机 (左)", bgUrl: ASSETS.HAND_LEFT, tag: 'HAND_L', isModel: false },
+                      { id: 1, title: "头部主视角 (主)", bgUrl: ASSETS.HEAD_MAIN, tag: 'HEAD_L', isModel: false },
+                      { id: 2, title: "右侧手部相机 (右)", bgUrl: ASSETS.HAND_RIGHT, tag: 'HAND_R', isModel: false },
+                      { id: 3, title: "机器人3D模型 (运动学)", bgUrl: ASSETS.IK_VIZ, tag: '3D_MODEL', isModel: true }
+                    ][focusedCameraIndex].isModel}
+                    annotationMode={annotationMode}
+                    annotations={annotations}
+                    onAddAnnotation={handleAddAnnotation}
+                    currentFrame={currentFrame}
+                  />
+                )}
+             </div>
+          </div>
+        )}
 
         {/* Right Column - Sidebar */}
         <div style={{ 
@@ -675,25 +772,58 @@ export default function AdvancedAuditPage() {
                 />
                 <Text strong style={{ fontSize: 18, color: '#262626' }}>{recordId}</Text>
               </div>
-
-              {/* Annotation Toolbar */}
-              <AnnotationToolbar mode={annotationMode} setMode={setAnnotationMode} />
            </div>
 
            <div style={{ flex: 1, overflowY: 'auto', padding: '0 24px' }}>
-              <AnnotationList 
-                annotations={annotations} 
-                onDelete={deleteAnnotation} 
-                onSelectItem={(anno) => setEditingAnnotation(anno)} 
-              />
-              <div className="sidebar-section-divider" />
-              <div style={{ marginBottom: 12 }}>
+              <div style={{ marginBottom: 16 }}>
                 <Text strong style={{ fontSize: 11, color: '#8c8c8c', textTransform: 'uppercase', letterSpacing: '0.06em' }}>标注任务关键步骤</Text>
               </div>
-              <TaskStep number={1} title="移动到货架旁" status="done" />
-              <TaskStep number={2} title="执行物体抓取" status="active" isActive={true} progress={65} time="00:03:15" />
-              <TaskStep number={3} title="提升并平稳转移" status="pending" />
-              <TaskStep number={4} title="精准放置到容器" status="pending" />
+              
+              <TaskStep 
+                id={1} number={1} title="移动到货架旁" status="done" 
+                isActive={activeStepId === 1} 
+                onClick={() => setActiveStepId(1)}
+              />
+              <TaskStep 
+                id={2} number={2} title="执行物体抓取" status="active" 
+                isActive={activeStepId === 2} 
+                onClick={() => setActiveStepId(2)}
+                progress={65} time="00:03:15"
+                initialStart={51} initialEnd={108}
+                annotations={annotations.filter(a => a.stepId === 2)}
+                annotationMode={activeStepId === 2 ? annotationMode : null}
+                onAddRange={() => handleSetAnnotationMode('range')}
+                onAddPoint={() => handleSetAnnotationMode('point')}
+                onAddBox={() => handleSetAnnotationMode('box')}
+                onDeleteAnno={deleteAnnotation}
+                allowedTools={allowedTools}
+              />
+              <TaskStep 
+                id={3} number={3} title="提升并平稳转移" status="pending" 
+                isActive={activeStepId === 3} 
+                onClick={() => setActiveStepId(3)}
+                initialStart={109} initialEnd={180}
+                annotations={annotations.filter(a => a.stepId === 3)}
+                annotationMode={activeStepId === 3 ? annotationMode : null}
+                onAddRange={() => handleSetAnnotationMode('range')}
+                onAddPoint={() => handleSetAnnotationMode('point')}
+                onAddBox={() => handleSetAnnotationMode('box')}
+                onDeleteAnno={deleteAnnotation}
+                allowedTools={allowedTools}
+              />
+              <TaskStep 
+                id={4} number={4} title="精准放置到容器" status="pending" 
+                isActive={activeStepId === 4} 
+                onClick={() => setActiveStepId(4)}
+                initialStart={181} initialEnd={250}
+                annotations={annotations.filter(a => a.stepId === 4)}
+                annotationMode={activeStepId === 4 ? annotationMode : null}
+                onAddRange={() => handleSetAnnotationMode('range')}
+                onAddPoint={() => handleSetAnnotationMode('point')}
+                onAddBox={() => handleSetAnnotationMode('box')}
+                onDeleteAnno={deleteAnnotation}
+                allowedTools={allowedTools}
+              />
            </div>
 
            {/* Audit Result Panel */}
@@ -731,7 +861,7 @@ export default function AdvancedAuditPage() {
             <Text style={{ fontSize: 13, color: '#595959', fontFamily: 'monospace', fontWeight: 600, width: 140 }}>00:03:45 / 00:05:30</Text>
             
             <div 
-              style={{ flex: 1, height: 4, background: '#f0f0f0', borderRadius: 2, margin: '0 32px', position: 'relative', cursor: annotationMode === 'range' ? 'pointer' : 'default' }}
+              style={{ flex: 1, height: 4, background: '#f0f0f0', borderRadius: 2, margin: '0 32px', position: 'relative', cursor: annotationMode === 'range' ? 'col-resize' : 'default' }}
               onMouseDown={onRangeMouseDown}
               onMouseMove={onRangeMouseMove}
               onMouseUp={onRangeMouseUp}
@@ -745,12 +875,39 @@ export default function AdvancedAuditPage() {
                     key={anno.id} 
                     className="range-segment" 
                     style={{ 
+                      position: 'absolute',
+                      height: 32,
+                      top: -14,
+                      borderRadius: 4,
+                      opacity: 0.85,
                       left: `${anno.start / 5.3}%`, 
                       width: `${(anno.end - anno.start) / 5.3}%`, 
                       backgroundColor: anno.color 
                     }}
                   >
-                    <span className="range-segment-label">{anno.label}</span>
+                     <span style={{ 
+                       position: 'absolute',
+                       top: -24,
+                       left: 0,
+                       padding: '2px 6px', 
+                       background: 'rgba(0,0,0,0.7)', 
+                       color: '#fff', 
+                       borderRadius: 4, 
+                       fontSize: 10, 
+                       whiteSpace: 'nowrap' 
+                     }}>
+                       {anno.label}
+                     </span>
+                     {/* Left Drag Handle */}
+                     <div 
+                       style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 8, cursor: 'ew-resize', background: 'rgba(255,255,255,0.4)', borderRight: `1px solid rgba(0,0,0,0.1)`, zIndex: 10, borderTopLeftRadius: 4, borderBottomLeftRadius: 4 }} 
+                       onMouseDown={(e) => onHandleMouseDown(e, anno.id, 'start')}
+                     />
+                     {/* Right Drag Handle */}
+                     <div 
+                       style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: 8, cursor: 'ew-resize', background: 'rgba(255,255,255,0.4)', borderLeft: `1px solid rgba(0,0,0,0.1)`, zIndex: 10, borderTopRightRadius: 4, borderBottomRightRadius: 4 }}
+                       onMouseDown={(e) => onHandleMouseDown(e, anno.id, 'end')}
+                     />
                   </div>
                ))}
 
@@ -760,7 +917,12 @@ export default function AdvancedAuditPage() {
                    className="range-drag-preview"
                    style={{
                      left: `${Math.min(rangeStart, rangeEnd)}%`,
-                     width: `${Math.abs(rangeStart - rangeEnd)}%`
+                     width: `${Math.abs(rangeStart - rangeEnd)}%`,
+                     position: 'absolute',
+                     top: -2,
+                     height: 8,
+                     background: 'rgba(24, 144, 255, 0.5)',
+                     borderRadius: 2
                    }}
                  />
                )}
@@ -785,12 +947,6 @@ export default function AdvancedAuditPage() {
                </Space>
                <Divider type="vertical" />
                <Text style={{ fontSize: 13, fontWeight: 500, cursor: 'pointer' }}>倍速播放</Text>
-               <Text 
-                 style={{ fontSize: 13, fontWeight: 500, cursor: 'pointer', color: annotationMode ? '#1890ff' : 'inherit' }}
-                 onClick={() => setAnnotationMode(annotationMode ? null : 'point')}
-               >
-                 标注模式
-               </Text>
             </Space>
          </div>
       </div>
