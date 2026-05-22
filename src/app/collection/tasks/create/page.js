@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useReducer, useEffect, useState } from 'react';
-import { Button, Input, Select, Form, Row, Col, Table, Spin, Alert, Steps, Radio, Space, InputNumber, Card, Tooltip, Switch, Upload, Drawer, Typography, Divider } from 'antd';
+import { Button, Input, Select, Form, Row, Col, Table, Spin, Alert, Steps, Radio, Space, InputNumber, Card, Tooltip, Switch, Upload, Drawer, Typography, Divider, Modal } from 'antd';
 import { AlertCircle, ArrowLeft, CheckCircle2, FilePlus2, Info, PlusCircle, UploadCloud, FileText, Eye } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
@@ -153,6 +153,27 @@ export default function CreateTaskPage() {
     const [selectedTemplate, setSelectedTemplate] = useState(null); // 'blank' or template object
     const [creationSource, setCreationSource] = useState('manual'); // 'manual' | 'copy' | 'ai'
     const [previewVisible, setPreviewVisible] = useState(false);
+    
+    // Project Options & Modal State
+    const [levelOneOptions, setLevelOneOptions] = useState([{ value: 'P-01', label: '项目一' }]);
+    const [levelTwoOptions, setLevelTwoOptions] = useState([{ value: 'P-01-01', label: '二级项目一' }]);
+    const [projectModalVisible, setProjectModalVisible] = useState(false);
+    const [projectModalType, setProjectModalType] = useState('levelOne'); // 'levelOne' | 'levelTwo'
+    const [newProjectName, setNewProjectName] = useState('');
+
+    const handleCreateProject = () => {
+        if (!newProjectName.trim()) return;
+        const newId = `P-${Date.now().toString().slice(-4)}`;
+        if (projectModalType === 'levelOne') {
+            setLevelOneOptions([...levelOneOptions, { value: newId, label: newProjectName }]);
+            dispatch({ type: 'UPDATE_PROJECT_INFO', payload: { levelOneId: newId } });
+        } else {
+            setLevelTwoOptions([...levelTwoOptions, { value: newId, label: newProjectName }]);
+            dispatch({ type: 'UPDATE_PROJECT_INFO', payload: { levelTwoId: newId } });
+        }
+        setProjectModalVisible(false);
+        setNewProjectName('');
+    };
     
     // Mock TaskBooks for selection
     const MOCK_TASKBOOKS = [
@@ -416,7 +437,23 @@ export default function CreateTaskPage() {
                                             <Card title="基础信息" size="small" style={{ marginBottom: 24 }} headStyle={{ background: '#fafafa' }}>
                                                 <Row gutter={48}>
                                                     <Col span={12}>
-                                                        <Form.Item label="一级项目" required><Select placeholder="请选择" value={formState.projectInfo.levelOneId} onChange={(v) => dispatch({ type: 'UPDATE_PROJECT_INFO', payload: { levelOneId: v } })} options={[{ value: 'P-01', label: '项目一' }]} /></Form.Item>
+                                                        <Form.Item label="一级项目" required>
+                                                            <Select 
+                                                                placeholder="请选择" 
+                                                                value={formState.projectInfo.levelOneId} 
+                                                                onChange={(v) => dispatch({ type: 'UPDATE_PROJECT_INFO', payload: { levelOneId: v } })} 
+                                                                options={levelOneOptions}
+                                                                dropdownRender={(menu) => (
+                                                                    <>
+                                                                        {menu}
+                                                                        <Divider style={{ margin: '8px 0' }} />
+                                                                        <Button type="text" block style={{ textAlign: 'left', display: 'flex', alignItems: 'center' }} onClick={() => { setProjectModalType('levelOne'); setProjectModalVisible(true); }}>
+                                                                            <PlusCircle size={14} style={{ marginRight: 8 }} /> 创建数据
+                                                                        </Button>
+                                                                    </>
+                                                                )}
+                                                            />
+                                                        </Form.Item>
                                                         <Form.Item label="任务名称" required><Input placeholder="请输入" value={formState.projectInfo.taskName} onChange={(e) => dispatch({ type: 'UPDATE_PROJECT_INFO', payload: { taskName: e.target.value } })} /></Form.Item>
                                                         <Form.Item label="任务用途" required><Select placeholder="请选择" value={formState.projectInfo.taskPurpose} onChange={(v) => dispatch({ type: 'UPDATE_PROJECT_INFO', payload: { taskPurpose: v } })} options={[{ value: 'purpose1', label: '用途1' }]} /></Form.Item>
                                                         <Form.Item label="关联任务书 (SOP)" required tooltip="任务书定义了本次采集的数据标准与验收规范">
@@ -437,7 +474,23 @@ export default function CreateTaskPage() {
                                                         </Form.Item>
                                                     </Col>
                                                     <Col span={12}>
-                                                        <Form.Item label="二级项目" required><Select placeholder="请选择" value={formState.projectInfo.levelTwoId} onChange={(v) => dispatch({ type: 'UPDATE_PROJECT_INFO', payload: { levelTwoId: v } })} options={[{ value: 'P-01-01', label: '二级项目一' }]} /></Form.Item>
+                                                        <Form.Item label="二级项目" required>
+                                                            <Select 
+                                                                placeholder="请选择" 
+                                                                value={formState.projectInfo.levelTwoId} 
+                                                                onChange={(v) => dispatch({ type: 'UPDATE_PROJECT_INFO', payload: { levelTwoId: v } })} 
+                                                                options={levelTwoOptions}
+                                                                dropdownRender={(menu) => (
+                                                                    <>
+                                                                        {menu}
+                                                                        <Divider style={{ margin: '8px 0' }} />
+                                                                        <Button type="text" block style={{ textAlign: 'left', display: 'flex', alignItems: 'center' }} onClick={() => { setProjectModalType('levelTwo'); setProjectModalVisible(true); }}>
+                                                                            <PlusCircle size={14} style={{ marginRight: 8 }} /> 创建数据
+                                                                        </Button>
+                                                                    </>
+                                                                )}
+                                                            />
+                                                        </Form.Item>
                                                         <Form.Item label="英文名称"><Input placeholder="请输入" value={formState.projectInfo.englishName} onChange={(e) => dispatch({ type: 'UPDATE_PROJECT_INFO', payload: { englishName: e.target.value } })} /></Form.Item>
                                                         <Form.Item label="场景分类" required>
                                                             <Select placeholder="请选择" value={formState.projectInfo.sceneCategory} onChange={(v) => dispatch({ type: 'UPDATE_PROJECT_INFO', payload: { sceneCategory: v } })} 
@@ -657,6 +710,26 @@ export default function CreateTaskPage() {
                     </div>
                 )}
             </Drawer>
+
+            <Modal
+                title={projectModalType === 'levelOne' ? "新建一级项目" : "新建二级项目"}
+                open={projectModalVisible}
+                onOk={handleCreateProject}
+                onCancel={() => { setProjectModalVisible(false); setNewProjectName(''); }}
+                okText="确认创建"
+                cancelText="取消"
+            >
+                <Form layout="vertical">
+                    <Form.Item label="项目名称" required>
+                        <Input 
+                            placeholder="请输入项目名称" 
+                            value={newProjectName} 
+                            onChange={(e) => setNewProjectName(e.target.value)}
+                            onPressEnter={handleCreateProject}
+                        />
+                    </Form.Item>
+                </Form>
+            </Modal>
         </MainLayout>
     );
 }
